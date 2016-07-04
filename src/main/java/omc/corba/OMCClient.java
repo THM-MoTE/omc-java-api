@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import omc.Global;
 import omc.corba.idl.OmcCommunication;
 import omc.corba.idl.OmcCommunicationHelper;
 
@@ -60,17 +61,14 @@ public class OMCClient implements OMCInterface {
   }
 
   Path getObjectReferencePath() {
-    final String osType = System.getProperty("os.name");
-    final String username = System.getProperty("user.name");
-    final Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"));
     Path resultingPath;
-    if (osType.contains("Linux") || osType.contains("Mac")) {
+    if (Global.isLinuxOS() || Global.isMacOS()) {
       // objRef in <tmp>/openmodelica.<username>.objid
-      resultingPath = tmpDir.resolve("openmodelica." + username + ".objid");
+      resultingPath = Global.tmpDir.resolve("openmodelica." + Global.username + ".objid");
       log.debug("OS is Linux, Mac; looking for file at {}", resultingPath);
     } else {
       // objRef in <tmp>/openmodelica.objid
-      resultingPath = tmpDir.resolve("openmodelica.objid");
+      resultingPath = Global.tmpDir.resolve("openmodelica.objid");
       log.debug("OS is Windows; looking for file at {}", resultingPath);
     }
     return resultingPath;
