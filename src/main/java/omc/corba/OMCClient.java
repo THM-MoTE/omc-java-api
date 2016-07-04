@@ -6,16 +6,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+
+import omc.corba.idl.OmcCommunication;
+import omc.corba.idl.OmcCommunicationHelper;
 
 import org.omg.CORBA.ORB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import omc.Global;
-import omc.corba.idl.OmcCommunication;
-import omc.corba.idl.OmcCommunicationHelper;
 
 public class OMCClient implements OMCInterface {
 	private Logger log = LoggerFactory.getLogger(OMCClient.class);

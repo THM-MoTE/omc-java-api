@@ -1,17 +1,14 @@
 package omc.corba;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 
-import omc.Global;
 import omc.corba.idl.OmcCommunication;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class OMCClientTest {
 	@Test
