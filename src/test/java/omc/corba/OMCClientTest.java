@@ -72,4 +72,15 @@ public class OMCClientTest {
     OMCClient client = new OMCClient();
     client.sendExpression("model t end t;");
   }
+
+  @Test
+  public void testErrors() throws IOException {
+    OMCClient client = new OMCClient();
+    client.connect();
+    Result res = client.sendExpression("loadFle(\"testbla\")");
+    assertTrue(res.error.isPresent());
+    assertTrue(res.error.get().contains("Klasse loadFle konnte nicht im"));
+    Result res2 = client.sendExpression("model tst end tst2;");
+    assertTrue(res2.error.get().contains("The identifier at start and end are different"));
+  }
 }
