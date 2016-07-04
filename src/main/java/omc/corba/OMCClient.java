@@ -60,7 +60,7 @@ public class OMCClient implements OMCInterface {
   String readObjectReference(Path pathToObjRef) throws IOException {
     // read only 1 line, ignoring linebreak
     String head = Files.readAllLines(pathToObjRef).get(0);
-    log.debug("Read {} as {}", pathToObjRef, head);
+    log.debug("Read CORBA-Reference from {}", pathToObjRef);
     return head;
   }
 
