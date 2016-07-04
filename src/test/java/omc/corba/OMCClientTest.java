@@ -45,5 +45,7 @@ public class OMCClientTest {
 		String content = client.readObjectReference(path);
 		OmcCommunication obj = client.convertToObject(content);
 		assertNotNull(obj);
+		String erg = obj.sendExpression("model test end test2;");
+		assertTrue(erg.contains("The identifier at start and end are different"));
 	}
 }
