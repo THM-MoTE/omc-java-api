@@ -5,6 +5,7 @@
 package omc.corba;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,8 +23,14 @@ public class OMCClient implements OMCInterface {
   private Logger log = LoggerFactory.getLogger(OMCClient.class);
   private OmcCommunication omc;
   private boolean isConnected;
+  private final Optional<String> omcExecutable;
 
   public OMCClient() {
+    omcExecutable = Optional.empty();
+  }
+
+  public OMCClient(String omcExec) {
+    omcExecutable = Optional.of(omcExec);
   }
 
   @Override
@@ -31,18 +38,47 @@ public class OMCClient implements OMCInterface {
     if (!isConnected)
       throw new IllegalStateException("Client not connected! Connect first!");
 
-    String erg = omc.sendExpression(expression);
+    String erg = omc.sendExpression(expression).trim();
     log.debug("sendExpression returned:\n{}", erg);
     return new Result(erg, getError());
   }
 
   @Override
-  public void connect() throws IOException {
+  public void connect() throws IOException, ConnectException {
     Path refPath = getObjectReferencePath();
     String stringifiedRef = readObjectReference(refPath);
     omc = convertToObject(stringifiedRef);
+    checkLiveness(omc);
     isConnected = true;
     log.debug("connected");
+  }
+
+  private void checkLiveness(OmcCommunication omc) throws ConnectException {
+    checkLivenessImpl(omc, 0);
+  }
+
+  private void checkLivenessImpl(OmcCommunication omc, int tryCnt) throws ConnectException {
+    if (tryCnt < maxTrys) {
+      try {
+        omc.sendExpression("model t end t;");
+      } catch (Exception ex) {
+        if (omcExecutable.isPresent()) {
+          startOMC();
+          try {
+            Thread.sleep(maxSleep);
+          } catch (InterruptedException e) {
+            // ignore & try again
+          }
+          checkLivenessImpl(omc, tryCnt + 1);
+        } else {
+          log.error("Couldn't connect to omc. Start omc as subprocess is disabled!");
+          throw new ConnectException("Couldn't connect to omc!");
+        }
+      }
+    } else {
+      log.error("Couldn't connect to omc after {} attempts", tryCnt);
+      throw new ConnectException("Couldn't connect to omc!");
+    }
   }
 
   public Optional<String> getError() {
@@ -76,5 +112,36 @@ public class OMCClient implements OMCInterface {
       log.debug("OS is Windows; looking for file at {}", resultingPath);
     }
     return resultingPath;
+  }
+
+  private Process startOMC() {
+    String arg = "+d=interactiveCorba";
+    if(!omcExecutable.isPresent())
+      throw new IllegalStateException("unknown omc executable!");
+
+    ProcessBuilder pb = new ProcessBuilder(omcExecutable.get(), arg);
+    Path omcWorkingDir = Global.tmpDir.resolve("omc_home");
+    Path logFile = omcWorkingDir.resolve("omc.log");
+    try {
+      Files.createDirectories(omcWorkingDir);
+      Files.createFile(logFile);
+    } catch (IOException e) {
+      log.error("Couldn't create working directory or logfile for omc");
+      throw new IllegalStateException("Couldn't create working directory or logfile for omc");
+    }
+
+    pb.directory(omcWorkingDir.toFile());
+    pb.redirectErrorStream(true); //merge stderr into stdin
+    pb.redirectInput(logFile.toFile());
+
+    try {
+      Process process = pb.start();
+      log.debug("started {} as omc-instance", omcExecutable.get());
+      return process;
+    } catch (IOException e) {
+      log.debug("exc", e);
+      log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir);
+      throw new IllegalStateException("couldn't start omc!");
+    }
   }
 }
