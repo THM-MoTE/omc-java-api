@@ -31,8 +31,8 @@ public class OMCClient implements OMCInterface {
     if (!isConnected)
       throw new IllegalStateException("Client not connected! Connect first!");
 
-    String erg = omc.sendExpression(expression);
-    log.debug("sendExpression returned:\n{}", erg);
+    String erg = omc.sendExpression(expression).trim();
+    log.debug("sending {} returned:\n{}", expression, erg);
     return new Result(erg, getError());
   }
 
@@ -46,8 +46,11 @@ public class OMCClient implements OMCInterface {
   }
 
   public Optional<String> getError() {
-    String erg = omc.sendExpression(GET_ERRORS);
-    return (erg.isEmpty()) ? Optional.empty() : Optional.of(erg);
+    String erg = omc.sendExpression(GET_ERRORS).trim();
+    log.debug("{} returned: {}", GET_ERRORS, erg);
+    return (erg.isEmpty() ||
+        erg.equals("\"\"")
+        ) ? Optional.empty() : Optional.of(erg);
   }
 
   OmcCommunication convertToObject(String stringifiedObject) {
