@@ -12,6 +12,8 @@ import omc.corba.idl.OmcCommunication;
 import omc.corba.idl.OmcCommunicationHelper;
 
 public class OMCClient implements OMCInterface {
+	private OmcCommunication omc;
+	private boolean isConnected;
 
 	public OMCClient() {
 		
@@ -24,9 +26,11 @@ public class OMCClient implements OMCInterface {
   }
 
 	@Override
-  public void connect() {
-	  // TODO Auto-generated method stub
-	  
+  public void connect() throws IOException {
+		Path refPath = getObjectReferencePath();
+		String stringifiedRef = readObjectReference(refPath);
+		omc = convertToObject(stringifiedRef);
+		isConnected = true;
   }
 	
 	OmcCommunication convertToObject(String stringifiedObject) {
