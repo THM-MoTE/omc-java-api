@@ -10,18 +10,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.omg.CORBA.ORB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import omc.Global;
 import omc.corba.idl.OmcCommunication;
 import omc.corba.idl.OmcCommunicationHelper;
 
 public class OMCClient implements OMCInterface {
+	private Logger log = LoggerFactory.getLogger(OMCClient.class);
 	private OmcCommunication omc;
 	private boolean isConnected;
 
-	public OMCClient() {
-		
-	}
+	public OMCClient() {}
 	
 	@Override
   public Result sendExpression(String expression) {
@@ -29,6 +30,7 @@ public class OMCClient implements OMCInterface {
 			throw new IllegalStateException("Client not connected! Connect first!");
 
 		String erg = omc.sendExpression(expression);
+		log.debug("sendExpression returned:\n{}", erg);
 	  List<String> error = getErrors();
 	  return new Result(erg, error);
   }
@@ -39,6 +41,7 @@ public class OMCClient implements OMCInterface {
 		String stringifiedRef = readObjectReference(refPath);
 		omc = convertToObject(stringifiedRef);
 		isConnected = true;
+		log.debug("connected");
   }
 	
 	public List<String> getErrors() {
@@ -54,7 +57,9 @@ public class OMCClient implements OMCInterface {
 	
 	String readObjectReference(Path pathToObjRef) throws IOException {
 		//read only 1 line, ignoring linebreak
-		return Files.readAllLines(pathToObjRef).get(0);
+		String head = Files.readAllLines(pathToObjRef).get(0);
+		log.debug("Read {} as {}", pathToObjRef, head);
+		return head;
 	}
 	
 	Path getObjectReferencePath() {
@@ -65,9 +70,11 @@ public class OMCClient implements OMCInterface {
 		if(osType.contains("Linux") || osType.contains("Mac")) {
 			//objRef in <tmp>/openmodelica.<username>.objid
 			resultingPath = tmpDir.resolve("openmodelica."+username+".objid");
+			log.debug("OS is Linux, Mac; looking for file at {}", resultingPath);
 		} else {
 		//objRef in <tmp>/openmodelica.objid
 			resultingPath = tmpDir.resolve("openmodelica.objid");
+			log.debug("OS is Windows; looking for file at {}", resultingPath);
 		}
 		return resultingPath;
 	}
