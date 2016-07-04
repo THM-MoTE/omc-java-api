@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import omc.Global;
 import omc.corba.idl.OmcCommunication;
@@ -47,5 +48,25 @@ public class OMCClientTest {
 		assertNotNull(obj);
 		String erg = obj.sendExpression("model test end test2;");
 		assertTrue(erg.contains("The identifier at start and end are different"));
+	}
+
+	@Test
+	public void connectTest() throws IOException {
+		OMCClient client = new OMCClient();
+		client.connect();
+		Result successResult = client.sendExpression("model test end test;");
+		assertTrue(successResult.result.length() > 1);
+		System.out.println(successResult.errors);
+		assertTrue(successResult.errors.isEmpty());
+
+		Result errorResult = client.sendExpression("model test ed test;");
+		assertEquals(errorResult.result.length(), 0);
+		assertTrue(errorResult.errors.size() > 0);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void sendWithoutConnectTest() throws IOException {
+		OMCClient client = new OMCClient();
+		client.sendExpression("model t end t;");
 	}
 }
