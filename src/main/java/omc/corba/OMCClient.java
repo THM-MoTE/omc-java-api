@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.omg.CORBA.ORB;
 
@@ -21,8 +25,12 @@ public class OMCClient implements OMCInterface {
 	
 	@Override
   public Result sendExpression(String expression) {
-	  // TODO Auto-generated method stub
-	  return null;
+		if (!isConnected)
+			throw new IllegalStateException("Client not connected! Connect first!");
+
+		String erg = omc.sendExpression(expression);
+	  List<String> error = getErrors();
+	  return new Result(erg, error);
   }
 
 	@Override
@@ -33,6 +41,11 @@ public class OMCClient implements OMCInterface {
 		isConnected = true;
   }
 	
+	public List<String> getErrors() {
+		String erg = omc.sendExpression(GET_ERRORS);
+    if(erg.isEmpty()) return Collections.emptyList();
+    else return Arrays.asList(erg);
+	}
 	OmcCommunication convertToObject(String stringifiedObject) {
 		String args[] = new String[1];
 		ORB orb = ORB.init(args, null);
