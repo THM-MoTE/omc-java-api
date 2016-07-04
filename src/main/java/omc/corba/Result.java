@@ -1,14 +1,14 @@
 package omc.corba;
 
-import java.util.List;
+import java.util.Optional;
 
 public class Result {
-	public final String result;
-	public final List<String> errors;
+  public final String result;
+  public final Optional<String> error;
 
-	public Result(String result, List<String> errors) {
-	  super();
-	  this.result = result;
-	  this.errors = errors;
+  public Result(String result, Optional<String> error) {
+    super();
+    this.result = result;
+    this.error = error;
   }
 }
