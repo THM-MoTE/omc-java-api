@@ -56,12 +56,11 @@ public class OMCClientTest {
 		client.connect();
 		Result successResult = client.sendExpression("model test end test;");
 		assertTrue(successResult.result.length() > 1);
-		System.out.println(successResult.errors);
 		assertTrue(successResult.errors.isEmpty());
 
 		Result errorResult = client.sendExpression("model test ed test;");
-		assertEquals(errorResult.result.length(), 0);
-		assertTrue(errorResult.errors.size() > 0);
+		assertTrue(errorResult.result.length() > 0);
+		assertTrue(errorResult.errors.isEmpty());
 	}
 
 	@Test(expected = IllegalStateException.class)
