@@ -21,4 +21,36 @@ public class Result {
     this.result = result;
     this.error = error;
   }
+
+  @Override
+  public String toString() {
+    return "Result [result=" + result + ", error=" + error + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Result other = (Result) obj;
+    if (error == null) {
+      if (other.error != null)
+        return false;
+    } else if (!error.equals(other.error))
+      return false;
+    if (result == null) {
+      if (other.result != null)
+        return false;
+    } else if (!result.equals(other.result))
+      return false;
+    return true;
+  }
 }
