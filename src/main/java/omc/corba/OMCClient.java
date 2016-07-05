@@ -48,8 +48,7 @@ public class OMCClient implements OMCInterface {
 
   @Override
   public void connect() throws IOException, ConnectException {
-    omc = createOmcConnection();
-    checkLiveness(omc);
+    checkLiveness(createOmcConnection());
     isConnected = true;
     log.debug("connected");
   }
@@ -73,6 +72,11 @@ public class OMCClient implements OMCInterface {
   }
 
   private void checkLivenessImpl(OmcCommunication omc, int tryCnt) throws IOException, ConnectException {
+    /* Trys to send an expression to running-omc.
+     * If this fails:
+     *  - if omcExecutable.isPresent() start omc as subprocess and try again until tryCnt reaches maxTrys
+     *  - else crash with exception
+     */
     if (tryCnt < maxTrys) {
       try {
         omc.sendExpression("model t end t;");
@@ -85,9 +89,8 @@ public class OMCClient implements OMCInterface {
           } catch (InterruptedException e) {
             // ignore & try again
           }
+          //setup new connection-object and try again
           OmcCommunication newConn = createOmcConnection();
-          assert(newConn != omc);
-          assert(!newConn.equals(omc));
           checkLivenessImpl(newConn, tryCnt + 1);
         } else {
           log.error("Couldn't connect to omc. Start omc as subprocess is disabled!");
@@ -95,6 +98,7 @@ public class OMCClient implements OMCInterface {
         }
       }
     } else {
+      //tried enough; give up
       log.error("Couldn't connect to omc after {} attempts", tryCnt);
       throw new ConnectException("Couldn't connect to omc!");
     }
@@ -140,6 +144,7 @@ public class OMCClient implements OMCInterface {
     Path omcWorkingDir = Global.tmpDir.resolve("omc_home");
     Path logFile = omcWorkingDir.resolve("omc.log");
     try {
+      //setup working directory & log file
       Files.createDirectories(omcWorkingDir);
       Files.deleteIfExists(logFile);
       Files.createFile(logFile);
@@ -157,8 +162,7 @@ public class OMCClient implements OMCInterface {
       log.debug("started {} as omc-instance", omcExecutable.get());
       return process;
     } catch (IOException e) {
-      log.debug("exc", e);
-      log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir);
+      log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir,  e);
       throw new IllegalStateException("couldn't start omc!");
     }
   }
