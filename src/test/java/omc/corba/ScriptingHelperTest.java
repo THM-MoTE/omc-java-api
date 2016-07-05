@@ -3,6 +3,8 @@ package omc.corba;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -55,5 +57,15 @@ public class ScriptingHelperTest {
 		List<Integer> numbers = Arrays.asList(6, 5, 8, 9, 10);
 		assertEquals("\"6\", \"5\", \"8\", \"9\", \"10\"",
 		    asStringParameterList(numbers));
+	}
+
+	@Test
+	public void killTrailingHyphensTest() {
+		String bckslsh = "\\";
+		String s = "\n\"eclipse is not pink! /tmp:4  \"";
+		assertEquals("eclipse is not pink! /tmp:4", killTrailingHyphens(s));
+
+		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
+		assertEquals("Awesome test case", killTrailingHyphens(s2));
 	}
 }
