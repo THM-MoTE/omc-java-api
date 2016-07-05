@@ -12,18 +12,22 @@ import java.net.ConnectException;
 import org.junit.Test;
 
 public class OMCClientStartOmcTest {
+
   @Test(expected = ConnectException.class)
   public void testNotStartingOMC() throws ConnectException, IOException {
     OMCClient omc = new OMCClient();
     omc.connect();
+    omc.disconnect();
   }
   
   @Test
-  public void testStartingOMC() throws ConnectException, IOException {
+  public void testStartingOMC() throws ConnectException, IOException, InterruptedException {
     OMCClient omc = new OMCClient("/usr/local/bin/omc");
     omc.connect();
     
     Result result = omc.sendExpression("model t end t;");
     assertEquals("{t}", result.result);
+    
+    omc.disconnect();
   }
 }

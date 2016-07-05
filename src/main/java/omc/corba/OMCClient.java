@@ -9,7 +9,9 @@ import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
+import java.util.Scanner;
 
 import omc.Global;
 import omc.corba.idl.OmcCommunication;
@@ -24,6 +26,7 @@ public class OMCClient implements OMCInterface {
   private OmcCommunication omc;
   private boolean isConnected;
   private final Optional<String> omcExecutable;
+  private Optional<Process> omcProcess = Optional.empty();
 
   public OMCClient() {
     omcExecutable = Optional.empty();
@@ -45,31 +48,47 @@ public class OMCClient implements OMCInterface {
 
   @Override
   public void connect() throws IOException, ConnectException {
-    Path refPath = getObjectReferencePath();
-    String stringifiedRef = readObjectReference(refPath);
-    omc = convertToObject(stringifiedRef);
+    omc = createOmcConnection();
     checkLiveness(omc);
     isConnected = true;
     log.debug("connected");
   }
 
-  private void checkLiveness(OmcCommunication omc) throws ConnectException {
+  @Override
+  public void disconnect() throws IOException {
+    omcProcess.ifPresent(p -> {
+      log.debug("kill sub-omc");
+      p.destroy();
+    });
+  }
+
+  private OmcCommunication createOmcConnection() throws IOException {
+    Path refPath = getObjectReferencePath();
+    String stringifiedRef = readObjectReference(refPath);
+    return convertToObject(stringifiedRef);
+  }
+
+  private void checkLiveness(OmcCommunication omc) throws IOException, ConnectException {
     checkLivenessImpl(omc, 0);
   }
 
-  private void checkLivenessImpl(OmcCommunication omc, int tryCnt) throws ConnectException {
+  private void checkLivenessImpl(OmcCommunication omc, int tryCnt) throws IOException, ConnectException {
     if (tryCnt < maxTrys) {
       try {
         omc.sendExpression("model t end t;");
+        this.omc = omc;
       } catch (Exception ex) {
         if (omcExecutable.isPresent()) {
-          startOMC();
+          omcProcess = Optional.of(startOMC());
           try {
             Thread.sleep(maxSleep);
           } catch (InterruptedException e) {
             // ignore & try again
           }
-          checkLivenessImpl(omc, tryCnt + 1);
+          OmcCommunication newConn = createOmcConnection();
+          assert(newConn != omc);
+          assert(!newConn.equals(omc));
+          checkLivenessImpl(newConn, tryCnt + 1);
         } else {
           log.error("Couldn't connect to omc. Start omc as subprocess is disabled!");
           throw new ConnectException("Couldn't connect to omc!");
@@ -105,11 +124,9 @@ public class OMCClient implements OMCInterface {
     if (Global.isLinuxOS() || Global.isMacOS()) {
       // objRef in <tmp>/openmodelica.<username>.objid
       resultingPath = Global.tmpDir.resolve("openmodelica." + Global.username + ".objid");
-      log.debug("OS is Linux, Mac; looking for file at {}", resultingPath);
     } else {
       // objRef in <tmp>/openmodelica.objid
       resultingPath = Global.tmpDir.resolve("openmodelica.objid");
-      log.debug("OS is Windows; looking for file at {}", resultingPath);
     }
     return resultingPath;
   }
@@ -124,15 +141,16 @@ public class OMCClient implements OMCInterface {
     Path logFile = omcWorkingDir.resolve("omc.log");
     try {
       Files.createDirectories(omcWorkingDir);
+      Files.deleteIfExists(logFile);
       Files.createFile(logFile);
     } catch (IOException e) {
-      log.error("Couldn't create working directory or logfile for omc");
+      log.error("Couldn't create working directory or logfile for omc", e);
       throw new IllegalStateException("Couldn't create working directory or logfile for omc");
     }
 
     pb.directory(omcWorkingDir.toFile());
     pb.redirectErrorStream(true); //merge stderr into stdin
-    pb.redirectInput(logFile.toFile());
+    pb.redirectOutput(logFile.toFile());
 
     try {
       Process process = pb.start();
@@ -144,4 +162,5 @@ public class OMCClient implements OMCInterface {
       throw new IllegalStateException("couldn't start omc!");
     }
   }
+
 }
