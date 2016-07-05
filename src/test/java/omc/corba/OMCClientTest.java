@@ -81,6 +81,6 @@ public class OMCClientTest {
     assertTrue(res.error.isPresent());
     assertTrue(res.error.get().contains("Klasse loadFle konnte nicht im"));
     Result res2 = client.sendExpression("model tst end tst2;");
-    assertTrue(res2.error.get().contains("The identifier at start and end are different"));
+    assertTrue(res2.result.contains("The identifier at start and end are different"));
   }
 }
