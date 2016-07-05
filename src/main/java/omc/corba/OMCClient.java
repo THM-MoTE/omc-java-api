@@ -65,6 +65,7 @@ public class OMCClient implements OMCInterface {
 
   @Override
   public void disconnect() throws IOException {
+    omc._release();
     omcProcess.ifPresent(p -> {
       log.debug("kill sub-omc");
       p.destroy();
@@ -116,9 +117,17 @@ public class OMCClient implements OMCInterface {
 
   public Optional<String> getError() {
     String erg = omc.sendExpression(GET_ERRORS).trim();
-    return (erg.isEmpty() ||
-        erg.equals("\"\"")
-        ) ? Optional.empty() : Optional.of(erg);
+
+    if(erg.isEmpty() || erg.equals("\"\""))
+      return Optional.empty();
+    else if(erg.startsWith("\"")) {
+      //kill dangling hyphens
+     erg = erg.substring(1);
+     if(erg.endsWith("\""))
+       erg = erg.substring(0, erg.length()-1);
+    }
+
+    return Optional.of(erg.trim());
   }
 
   /** Converts the given String object into a OmcCommunication object. */
