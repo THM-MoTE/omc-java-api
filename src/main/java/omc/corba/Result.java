@@ -6,8 +6,14 @@ package omc.corba;
 
 import java.util.Optional;
 
+/**
+ * Result from a call to omc containing the result string and an optional error-message.
+ * @author Nicola Justus
+ */
 public class Result {
+  /** The result from the call */
   public final String result;
+  /** Optional Error message */
   public final Optional<String> error;
 
   public Result(String result, Optional<String> error) {
