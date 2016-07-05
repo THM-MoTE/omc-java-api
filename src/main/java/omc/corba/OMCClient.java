@@ -18,6 +18,19 @@ import org.omg.CORBA.ORB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Implementation of OMCInterface.
+ * 
+ * <P>
+ * This implementation is based on <B>OpenModelica's system documentation</B> which is available here:
+ * <a href="https://www.openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf">System Documentation</a>.
+ * The implementation awaits CORBA-object references in the following 2 path's:
+ * <ul>
+ *  <li>Windows: <code>$TMP/openmodelica.objid</code></li>
+ *  <li>Linux, Mac: <code>$TMP/openmodelica.USER.objid</code></li>
+ * </ul>
+ * </P>
+ * @author Nicola Justus
+ */
 public class OMCClient implements OMCInterface {
   private Logger log = LoggerFactory.getLogger(OMCClient.class);
   private OmcCommunication omc;
@@ -107,6 +120,7 @@ public class OMCClient implements OMCInterface {
         ) ? Optional.empty() : Optional.of(erg);
   }
 
+  /** Converts the given String object into a OmcCommunication object. */
   OmcCommunication convertToObject(String stringifiedObject) {
     String args[] = new String[1];
     ORB orb = ORB.init(args, null);
@@ -114,6 +128,7 @@ public class OMCClient implements OMCInterface {
         .string_to_object(stringifiedObject));
   }
 
+  /** Reads a object reference from the given path into a String. */
   String readObjectReference(Path pathToObjRef) throws IOException {
     // read only 1 line, ignoring linebreak
     String head = Files.readAllLines(pathToObjRef).get(0);
@@ -121,6 +136,7 @@ public class OMCClient implements OMCInterface {
     return head;
   }
 
+  /** Returns a path to the omc CORBA object. */
   Path getObjectReferencePath() {
     Path resultingPath;
     if (Global.isLinuxOS() || Global.isMacOS()) {
@@ -133,6 +149,7 @@ public class OMCClient implements OMCInterface {
     return resultingPath;
   }
 
+  /** Starts a new omc-instance as subprocess */
   private Process startOMC() {
     String arg = "+d=interactiveCorba";
     if(!omcExecutable.isPresent())
