@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import omc.corba.idl.OmcCommunication;
 
@@ -82,5 +83,19 @@ public class OMCClientTest {
     assertTrue(res.error.get().contains("Klasse loadFle konnte nicht im"));
     Result res2 = client.sendExpression("model tst end tst2;");
     assertTrue(res2.result.contains("The identifier at start and end are different"));
+  }
+  
+  @Test
+  public void testExpressions() throws IOException {
+    OMCClient client = new OMCClient();
+    client.connect();
+    Result r = client.sendExpression("model test Real x = 0.0; end test;");
+    assertEquals(new Result("{test}", Optional.empty()), r);
+    
+    String resString = "\"Check of test completed successfully.\n" +
+            "Class test has 1 equation(s) and 1 variable(s).\n" +
+            "1 of these are trivial equation(s).\"";
+    Result r2 = client.sendExpression("checkModel(test)");
+    assertEquals(new Result(resString, Optional.empty()), r2);
   }
 }
