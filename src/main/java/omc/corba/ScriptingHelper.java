@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.swing.event.HyperlinkEvent;
-
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
  */
