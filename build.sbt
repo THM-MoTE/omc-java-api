@@ -1,3 +1,8 @@
+//include resources-jar (from java's home directory) in classpath for using
+//com.sun.corba.se -package
+unmanagedJars in Compile += Attributed.blank(
+  file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "resources.jar")
+
 lazy val root = (project in file(".")).
   settings(
     name := "omc-java-api",
@@ -7,5 +12,5 @@ lazy val root = (project in file(".")).
   )
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
-
+libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
 autoScalaLibrary := false
