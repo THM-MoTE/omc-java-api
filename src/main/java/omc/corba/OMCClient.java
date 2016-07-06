@@ -4,6 +4,7 @@
 
 package omc.corba;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.file.Files;
@@ -19,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Implementation of OMCInterface.
- * 
+ *
  * <P>
  * This implementation is based on <B>OpenModelica's system documentation</B> which is available here:
  * <a href="https://www.openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf">System Documentation</a>.
@@ -58,10 +59,42 @@ public class OMCClient implements OMCInterface {
 
   @Override
   public void connect() throws IOException, ConnectException {
-    checkLiveness(createOmcConnection());
-    isConnected = true;
-    log.debug("connected");
+    connectImpl(0);
   }
+
+  private void connectImpl(int tryCnt) throws FileNotFoundException, IOException {
+    if(tryCnt < maxTrys) {
+      try {
+        //try to read the corba reference
+        this.omc = createOmcConnection();
+        omc.sendExpression("model t end t;");
+        isConnected = true;
+        log.debug("connected");
+      } catch (FileNotFoundException | org.omg.CORBA.COMM_FAILURE e) {
+        //corba ref not found or connection error
+        if(omcExecutable.isPresent()) {
+          //ok start omc; try again
+          omcProcess = Optional.of(startOMC());
+          try {
+            Thread.sleep(maxSleep);
+          } catch (InterruptedException ex) {
+            // ignore & try again
+          }
+          connectImpl(tryCnt+1);
+        }
+        else {
+          //give up
+          log.error("Couldn't connect to omc. Start omc as subprocess is disabled!");
+          throw new ConnectException("Couldn't connect to omc!");
+        }
+      }
+    } else {
+      //tried enough; give up
+      log.error("Couldn't connect to omc after {} attempts", tryCnt);
+      throw new ConnectException("Couldn't connect to omc!");
+    }
+  }
+
 
   @Override
   public void disconnect() throws IOException {
@@ -72,47 +105,13 @@ public class OMCClient implements OMCInterface {
     });
   }
 
-  private OmcCommunication createOmcConnection() throws IOException {
+  private OmcCommunication createOmcConnection() throws IOException, FileNotFoundException {
     Path refPath = getObjectReferencePath();
-    String stringifiedRef = readObjectReference(refPath);
-    return convertToObject(stringifiedRef);
-  }
-
-  private void checkLiveness(OmcCommunication omc) throws IOException, ConnectException {
-    checkLivenessImpl(omc, 0);
-  }
-
-  private void checkLivenessImpl(OmcCommunication omc, int tryCnt) throws IOException, ConnectException {
-    /* Trys to send an expression to running-omc.
-     * If this fails:
-     *  - if omcExecutable.isPresent() start omc as subprocess and try again until tryCnt reaches maxTrys
-     *  - else crash with exception
-     */
-    if (tryCnt < maxTrys) {
-      try {
-        omc.sendExpression("model t end t;");
-        this.omc = omc;
-      } catch (Exception ex) {
-        if (omcExecutable.isPresent()) {
-          omcProcess = Optional.of(startOMC());
-          try {
-            Thread.sleep(maxSleep);
-          } catch (InterruptedException e) {
-            // ignore & try again
-          }
-          //setup new connection-object and try again
-          OmcCommunication newConn = createOmcConnection();
-          checkLivenessImpl(newConn, tryCnt + 1);
-        } else {
-          log.error("Couldn't connect to omc. Start omc as subprocess is disabled!");
-          throw new ConnectException("Couldn't connect to omc!");
-        }
-      }
-    } else {
-      //tried enough; give up
-      log.error("Couldn't connect to omc after {} attempts", tryCnt);
-      throw new ConnectException("Couldn't connect to omc!");
-    }
+    if(Files.exists(refPath)) {
+      String stringifiedRef = readObjectReference(refPath);
+      return convertToObject(stringifiedRef);
+    } else
+      throw new FileNotFoundException("Couldn't find "+refPath);
   }
 
   public Optional<String> getError() {
