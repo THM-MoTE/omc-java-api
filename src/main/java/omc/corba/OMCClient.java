@@ -75,6 +75,7 @@ public class OMCClient implements OMCInterface {
         //corba ref not found or connection error
         if(omcExecutable.isPresent()) {
           //ok start omc; try again
+          log.debug("Couldn't connect to omc; try starting omc-subprocess");
           omcProcess = Optional.of(startOMC());
           try {
             Thread.sleep(maxSleep);
@@ -193,7 +194,7 @@ public class OMCClient implements OMCInterface {
 
     try {
       Process process = pb.start();
-      log.debug("started {} as omc-instance", omcExecutable.get());
+      log.debug("started {} {}", omcExecutable.get(), arg);
       return process;
     } catch (IOException e) {
       log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir,  e);
