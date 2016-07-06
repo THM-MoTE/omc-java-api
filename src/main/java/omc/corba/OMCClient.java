@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class OMCClient implements OMCInterface {
   private Logger log = LoggerFactory.getLogger(OMCClient.class);
   private OmcCommunication omc;
-  private Optional<ORB> orbOpt;
+  private Optional<ORB> orbOpt = Optional.empty();
   private boolean isConnected;
   private final Optional<String> omcExecutable;
   private Optional<Process> omcProcess = Optional.empty();
