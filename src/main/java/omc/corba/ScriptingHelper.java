@@ -38,9 +38,12 @@ public final class ScriptingHelper {
 	}
 
 	public static String asParameterList(Collection<?> c) {
-		StringBuilder sb = new StringBuilder();
-		c.forEach(x -> sb.append(x.toString() + ", "));
-		return sb.substring(0, sb.length() - 2);
+		if(c.isEmpty()) return ""
+		else {
+			StringBuilder sb = new StringBuilder();
+			c.forEach(x -> sb.append(x.toString() + ", "));
+			return sb.substring(0, sb.length() - 2);
+		}
 	}
 
 	public static String asStringArray(Collection<?> c) {
