@@ -84,18 +84,26 @@ public class OMCClientTest {
     Result res2 = client.sendExpression("model tst end tst2;");
     assertTrue(res2.result.contains("The identifier at start and end are different"));
   }
-  
+
   @Test
   public void testExpressions() throws IOException {
     OMCClient client = new OMCClient();
     client.connect();
     Result r = client.sendExpression("model test Real x = 0.0; end test;");
     assertEquals(new Result("{test}", Optional.empty()), r);
-    
+
     String resString = "\"Check of test completed successfully.\n" +
             "Class test has 1 equation(s) and 1 variable(s).\n" +
             "1 of these are trivial equation(s).\"";
     Result r2 = client.sendExpression("checkModel(test)");
     assertEquals(new Result(resString, Optional.empty()), r2);
+  }
+
+  @Test
+  public void testCall() throws IOException {
+    OMCClient client = new OMCClient();
+    client.connect();
+    Result res = client.call("loadFile", "\"testi\"");
+    assertEquals("false", res.result);
   }
 }

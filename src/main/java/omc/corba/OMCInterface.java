@@ -5,13 +5,14 @@
 package omc.corba;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /** Represents a connection to omc over CORBA.
- * 
+ *
  * A CORBA client is only usable after a call to
- * {@link OMCInterface#connect() connect} and until a call to 
+ * {@link OMCInterface#connect() connect} and until a call to
  * {@link OMCInterface#disconnect() disconnect}.
- * 
+ *
  * <pre>
  * A typical workflow with implementations is:
  * {@code
@@ -24,7 +25,7 @@ import java.io.IOException;
  *  //client disconnected; stop using it
  * }
  * </pre>
- * 
+ *
  * @author Nicola Justus
  */
 public interface OMCInterface {
@@ -50,4 +51,9 @@ public interface OMCInterface {
    * @throws IOException if an io-error occurs
    */
   public void disconnect() throws IOException;
+
+  public default Result call(String functionName, Object... args) {
+    String expr = functionName +"("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
+    return sendExpression(expr);
+  }
 }
