@@ -7,6 +7,7 @@ package omc.corba;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -78,5 +79,8 @@ public class ScriptingHelperTest {
 		List<String> exp = Arrays.asList("nico", "model", "jenny", "derb");
 		assertEquals(exp, fromArray(s));
 		assertEquals(exp, fromArray(s2));
+
+		String s3 = "\"{}\"";
+		assertEquals(Collections.emptyList(), fromArray(s3));
 	}
 }

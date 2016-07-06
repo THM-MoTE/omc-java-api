@@ -38,7 +38,7 @@ public final class ScriptingHelper {
 	}
 
 	public static String asParameterList(Collection<?> c) {
-		if(c.isEmpty()) return ""
+		if(c.isEmpty()) return "";
 		else {
 			StringBuilder sb = new StringBuilder();
 			c.forEach(x -> sb.append(x.toString() + ", "));
@@ -72,11 +72,11 @@ public final class ScriptingHelper {
 
 	public static List<String> fromArray(String modelicaExpr) {
 		Matcher matcher = arrayPattern.matcher(modelicaExpr);
-		System.out.println(matcher.matches());
-		System.out.println(matcher.pattern());
 		if(matcher.matches()) {
 			String group = matcher.group(1).trim();
-			return Arrays.stream(group.split(",")).map(String::trim).collect(Collectors.toList());
+			return (group.isEmpty()) ?
+				Collections.emptyList() :
+				Arrays.stream(group.split(",")).map(String::trim).collect(Collectors.toList());
 		} else
 			return Collections.emptyList();
 	}

@@ -53,7 +53,9 @@ public interface OMCInterface {
   public void disconnect() throws IOException;
 
   public default Result call(String functionName, Object... args) {
-    String expr = functionName +"("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
+    String params =
+      (args.length == 0) ? "()" : "("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
+    String expr = functionName + params;
     return sendExpression(expr);
   }
 }
