@@ -61,6 +61,7 @@ public class OMCClient implements OMCInterface {
   @Override
   public void connect() throws IOException, ConnectException {
     connectImpl(0);
+    call("loadModel", "Modelica");
   }
 
   private void connectImpl(int tryCnt) throws FileNotFoundException, IOException {
