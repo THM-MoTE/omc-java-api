@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import java.util.Arrays;
+import java.util.Collections;
 
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
@@ -16,6 +19,8 @@ public final class ScriptingHelper {
 	private static Pattern hyphenBackslashPattern = Pattern.compile("\n?"+bckslash+"\"(.*)"+bckslash+"\"\n?");
 	//matches : "Awesome test case"
 	private static Pattern hyphenPattern = Pattern.compile("\n?\"(.*)\"\n?");
+
+	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
 
 	private ScriptingHelper() {
 	}
@@ -56,5 +61,16 @@ public final class ScriptingHelper {
 				return (matcher2.groupCount() >= 1) ? matcher2.group(1).trim() : s;
 			else return s;
 		}
+	}
+
+	public static List<String> fromArray(String modelicaExpr) {
+		Matcher matcher = arrayPattern.matcher(modelicaExpr);
+		System.out.println(matcher.matches());
+		System.out.println(matcher.pattern());
+		if(matcher.matches()) {
+			String group = matcher.group(1).trim();
+			return Arrays.stream(group.split(",")).map(String::trim).collect(Collectors.toList());
+		} else
+			return Collections.emptyList();
 	}
 }

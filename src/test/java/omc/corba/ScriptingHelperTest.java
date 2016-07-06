@@ -66,4 +66,13 @@ public class ScriptingHelperTest {
 		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
 		assertEquals("Awesome test case", killTrailingHyphens(s2));
 	}
+
+	@Test
+	public void fromArrayTest() {
+		String s = "{nico, model, jenny, derb}";
+		String s2 = "\"{nico, model, jenny, derb}\"";
+		List<String> exp = Arrays.asList("nico", "model", "jenny", "derb");
+		assertEquals(exp, fromArray(s));
+		assertEquals(exp, fromArray(s2));
+	}
 }
