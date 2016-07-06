@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class OMCClient implements OMCInterface {
   private Logger log = LoggerFactory.getLogger(OMCClient.class);
   private OmcCommunication omc;
+  private Optional<ORB> orbOpt;
   private boolean isConnected;
   private final Optional<String> omcExecutable;
   private Optional<Process> omcProcess = Optional.empty();
@@ -99,10 +100,18 @@ public class OMCClient implements OMCInterface {
   @Override
   public void disconnect() throws IOException {
     omc._release();
-    omcProcess.ifPresent(p -> {
-      log.debug("kill sub-omc");
-      p.destroy();
+    //IMPORTANT: kill ORB-instance so that
+    //running RMI thread terminate
+    orbOpt.ifPresent(orb -> {
+      orb.shutdown(true);
+      orb.destroy();
+      log.debug("killed ORB");
     });
+    omcProcess.ifPresent(p -> {
+      p.destroy();
+      log.debug("killed omc subprocess");
+    });
+    isConnected = false;
   }
 
   private OmcCommunication createOmcConnection() throws IOException, FileNotFoundException {
@@ -133,6 +142,7 @@ public class OMCClient implements OMCInterface {
   OmcCommunication convertToObject(String stringifiedObject) {
     String args[] = new String[1];
     ORB orb = ORB.init(args, null);
+    orbOpt = Optional.of(orb);
     return OmcCommunicationHelper.narrow(orb
         .string_to_object(stringifiedObject));
   }
