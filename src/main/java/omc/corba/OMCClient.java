@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 /** Implementation of OMCInterface.
  *
- * <P>
+ * <p>
  * This implementation is based on <B>OpenModelica's system documentation</B> which is available here:
  * <a href="https://www.openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf">System Documentation</a>.
  * The implementation awaits CORBA-object references in the following 2 path's:
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  *  <li>Linux, Mac: <code>$TMP/openmodelica.USER.objid</code></li>
  * </ul>
  * Further information about omc's corba-communication are available at System Documentation page 130.
- * </P>
+ * </p>
  * @author Nicola Justus
  */
 public class OMCClient implements OMCInterface {

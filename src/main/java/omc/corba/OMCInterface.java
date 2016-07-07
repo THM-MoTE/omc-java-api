@@ -17,6 +17,14 @@ import org.slf4j.Logger;
  * {@link OMCInterface#connect() connect} and until a call to
  * {@link OMCInterface#disconnect() disconnect}.
  *
+ * <p>
+ *  Note: Java's CORBA-API uses the java.util.logging framework.
+ *  If you use another logging framework (for example Logback) you should supress
+ * logging from java.util.logging. It's not possible to control the JUC framework form another logging
+ * framework. SLF4J has an
+ *  <a href="http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html">adapter</a>
+ *  to route JUC logging into SLF4J.
+ * </p>
  * <pre>
  * A typical workflow with implementations is:
  * {@code
@@ -38,7 +46,7 @@ public interface OMCInterface {
   public static final int maxSleep = 3_000;
 
   /**
-   * Sends the given expression to omc & returning the result from omc.
+   * Sends the given expression to omc &amp; returning the result from omc.
    * @param expression a modelica-expression
    * @return answer from omc
    */
