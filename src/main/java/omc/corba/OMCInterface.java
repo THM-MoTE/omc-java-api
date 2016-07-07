@@ -6,6 +6,10 @@ package omc.corba;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.slf4j.Logger;
 
 /** Represents a connection to omc over CORBA.
  *
@@ -57,5 +61,42 @@ public interface OMCInterface {
       (args.length == 0) ? "()" : "("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
     String expr = functionName + params;
     return sendExpression(expr);
+  }
+
+  // =========== API functions
+  public default boolean is_(String type, String className) {
+    String functionName = "is"+type;
+    Result res = call(functionName, className);
+    if(res.error.isPresent()) return false;
+    else {
+      return res.result.equals("true") ? true : false;
+    }
+  }
+
+  public default List<String> getList(String functionName, Object... args) {
+    Result res = call(functionName, args);
+    if(res.error.isPresent()) {
+      return Collections.emptyList();
+    } else {
+      return ScriptingHelper.fromArray(res.result);
+    }
+  }
+
+  public default String checkModel(String modelName) {
+    Result res = call("checkModel", modelName);
+    if(res.error.isPresent()) {
+      return res.error.get();
+    } else {
+      return res.result;
+    }
+  }
+
+  public default String checkAllModelsRecursive(String modelName) {
+    Result res = call("checkAllModelsRecursive", modelName);
+    if(res.error.isPresent()) {
+      return res.error.get();
+    } else {
+      return res.result;
+    }
   }
 }
