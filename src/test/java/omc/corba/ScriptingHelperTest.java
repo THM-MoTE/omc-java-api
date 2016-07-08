@@ -4,10 +4,14 @@
 
 package omc.corba;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -82,5 +86,26 @@ public class ScriptingHelperTest {
 
 		String s3 = "\"{}\"";
 		assertEquals(Collections.emptyList(), fromArray(s3));
+	}
+
+	@Test
+	public void getModelNameTest() {
+	  String test = "model test\nReal x = 1;\nend test;";
+	  assertEquals(Optional.of("test"), getModelName(test));
+
+   String test2 = "this is a tst file";
+   assertEquals(Optional.empty(), getModelName(test2));
+
+   String test3 = "within modelica.nico.test;\nmodel Baroreceptor \"a wonderfull comment\"\nend Baroreceptor;";
+   assertEquals(Optional.of("modelica.nico.test.Baroreceptor"), getModelName(test3));
+	}
+
+	@Test
+	public void getModelNameFromPathTest() throws URISyntaxException, IOException {
+	  Path file1 = Paths.get(getClass().getClassLoader().getResource("ResistorTest.mo").toURI());
+	  Path file2 = Paths.get(getClass().getClassLoader().getResource("ResistorTest2.mo").toURI());
+
+	  assertEquals(Optional.of("ResistorTest"), getModelName(file1));
+	  assertEquals(Optional.of("nico.components.ResistorTest"), getModelName(file2));
 	}
 }

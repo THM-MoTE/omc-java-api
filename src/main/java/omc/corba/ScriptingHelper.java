@@ -4,14 +4,20 @@
 
 package omc.corba;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.util.Arrays;
 import java.util.Collections;
+
+import omc.Global;
 
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
@@ -25,6 +31,11 @@ public final class ScriptingHelper {
 	private static Pattern hyphenPattern = Pattern.compile("\n?\"(.*)\"\n?");
 
 	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
+
+  private static final String withinRegex = "within\\s+([\\w\\._]+);";
+  private static final String modelRegex = "model\\s+([\\w_]+)";
+  private static final Pattern withinPattern = Pattern.compile(withinRegex);
+  private static final Pattern modelPattern = Pattern.compile(modelRegex);
 
 	private ScriptingHelper() {
 	}
@@ -80,4 +91,23 @@ public final class ScriptingHelper {
 		} else
 			return Collections.emptyList();
 	}
+
+  public static Optional<String> getModelName(String modelicaCode) {
+    Matcher withinMatcher = withinPattern.matcher(modelicaCode);
+    Matcher modelMatcher = modelPattern.matcher(modelicaCode);
+    String packageName = "";
+    if(withinMatcher.find()) {
+      packageName = withinMatcher.group(1) + ".";
+    }
+
+    if(modelMatcher.find()) {
+      String modelName = modelMatcher.group(1);
+      return Optional.of(packageName + modelName);
+    } else
+      return Optional.empty();
+  }
+
+  public static Optional<String> getModelName(Path file) throws IOException {
+    return getModelName(new String(Files.readAllBytes(file), Global.encoding));
+  }
 }
