@@ -1,9 +1,9 @@
 //include resources-jar (from java's home directory) in classpath for using
 //com.sun.corba.se -package
-unmanagedJars in Compile += Attributed.blank(
-  file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "resources.jar")
+ unmanagedJars in Runtime +=
+    file(System.getenv("JAVA_HOME")) / "jre" / "lib" / "resources.jar"
 
-lazy val root = (project in file(".")).
+lazy val root = Project(id = "omc-java-api", base = file(".")).
   settings(
     name := "omc-java-api",
     version := "0.1",
