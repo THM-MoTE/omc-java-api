@@ -74,6 +74,14 @@ public class ScriptingHelperTest {
 
 		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
 		assertEquals("Awesome test case", killTrailingHyphens(s2));
+
+		String s3 = "\"Check of test completed successfully.\n"+
+		    "Class test has 2 equation(s) and 1 variable(s).\n"+
+		    "2 of these are trivial equation(s).\"";
+
+		assertEquals("Check of test completed successfully.\n"+
+        "Class test has 2 equation(s) and 1 variable(s).\n"+
+        "2 of these are trivial equation(s).", killTrailingHyphens(s3));
 	}
 
 	@Test

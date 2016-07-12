@@ -28,7 +28,7 @@ public final class ScriptingHelper {
 	//matches: \"Awesome test case\"
 	private static Pattern hyphenBackslashPattern = Pattern.compile("\n?"+bckslash+"\"(.*)"+bckslash+"\"\n?");
 	//matches : "Awesome test case"
-	private static Pattern hyphenPattern = Pattern.compile("\n?\"(.*)\"\n?");
+	private static Pattern hyphenPattern = Pattern.compile("^\n?\"((.|\n)*)\"\n?$");
 
 	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
 
