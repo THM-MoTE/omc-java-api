@@ -32,7 +32,7 @@ public final class ScriptingHelper {
 
 	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
 
-	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.]+)+)");
+	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.\\s]+)+)");
 
   private static final String withinRegex = "within\\s+([\\w\\._]+);";
   private static final String modelRegex = "model\\s+([\\w_]+)";
