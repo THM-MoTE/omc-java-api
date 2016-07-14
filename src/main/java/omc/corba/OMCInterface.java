@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 
@@ -106,5 +107,12 @@ public interface OMCInterface {
     } else {
       return res.result;
     }
+  }
+
+  public default Optional<String> getClassInformation(String className) {
+    Result res = call("getClassInformation", className);
+    return (res.error.isPresent()) ?
+            Optional.empty() :
+            Optional.of(res.result);
   }
 }

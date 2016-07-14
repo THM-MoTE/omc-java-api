@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,5 +50,16 @@ public class OmcAPITest {
     omc.sendExpression("model test2 Integer x; equation x = 1; end test2;");
     String exp2 = "\"Check of test2 completed successfully.\nClass test2 has 1 equation(s) and 1 variable(s).\n1 of these are trivial equation(s).\"";
     assertEquals(exp2, omc.checkModel("test2"));
+  }
+
+  @Test
+  public void getClassInformationTest() throws ConnectException, IOException {
+    Optional<String> info = omc.getClassInformation("Modelica");
+    assertTrue(info.isPresent());
+    assertTrue(info.get().contains("package"));
+
+    Optional<String> info2 = omc.getClassInformation("Modelica.Electrical");
+    assertTrue(info2.isPresent());
+    assertTrue(info2.get().contains("Library of electrical models (analog, digital, machines, multi-phase)"));
   }
 }
