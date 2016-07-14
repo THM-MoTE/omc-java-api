@@ -116,4 +116,12 @@ public class ScriptingHelperTest {
 	  assertEquals(Optional.of("ResistorTest"), getModelName(file1));
 	  assertEquals(Optional.of("nico.components.ResistorTest"), getModelName(file2));
 	}
+
+	@Test
+	public void extractPathTest() {
+	  String test = "(\"package\",\"\",false,false,false,\"/Users/nico/2014-modelica-kotani/SHM/package.mo\",false,2,1,6,8,{},false,false,\"\",\"\")";
+	  assertEquals(Optional.of("/Users/nico/2014-modelica-kotani/SHM/package.mo"), extractPath(test));
+	  assertEquals(Optional.of("/home/nico/blup.txt"), extractPath("/home/nico/blup.txt"));
+	  assertEquals(Optional.of("/home/nico/blup.txt"), extractPath("truefalse,true\"/home/nico/blup.txt\"cksiqichökajs"));
+	}
 }

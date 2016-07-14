@@ -32,6 +32,8 @@ public final class ScriptingHelper {
 
 	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
 
+	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.]+)+)");
+
   private static final String withinRegex = "within\\s+([\\w\\._]+);";
   private static final String modelRegex = "model\\s+([\\w_]+)";
   private static final Pattern withinPattern = Pattern.compile(withinRegex);
@@ -110,4 +112,12 @@ public final class ScriptingHelper {
   public static Optional<String> getModelName(Path file) throws IOException {
     return getModelName(new String(Files.readAllBytes(file), Global.encoding));
   }
+
+	public static Optional<String> extractPath(String str) {
+		Matcher pathMatcher = pathPattern.matcher(str);
+		if(pathMatcher.find()) {
+			String path = pathMatcher.group(1);
+			return Optional.of(path);
+		} else return Optional.empty();
+	}
 }
