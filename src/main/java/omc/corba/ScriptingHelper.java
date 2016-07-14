@@ -113,11 +113,12 @@ public final class ScriptingHelper {
     return getModelName(new String(Files.readAllBytes(file), Global.encoding));
   }
 
-	public static Optional<String> extractPath(String str) {
-		Matcher pathMatcher = pathPattern.matcher(str);
-		if(pathMatcher.find()) {
-			String path = pathMatcher.group(1);
-			return Optional.of(path);
-		} else return Optional.empty();
-	}
+  public static Optional<String> extractPath(String str) {
+    Matcher pathMatcher = pathPattern.matcher(str);
+    if (pathMatcher.find()) {
+      String path = pathMatcher.group(1);
+      return Optional.of(path);
+    } else
+      return Optional.empty();
+  }
 }
