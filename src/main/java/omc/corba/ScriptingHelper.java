@@ -78,7 +78,7 @@ public final class ScriptingHelper {
 	}
 
     /** Removes trailing and leading quotes (&quot;) from `s`. */
-	public static String killTrailingHyphens(String s) {
+	public static String killTrailingQuotes(String s) {
 		Matcher matcher = quoteBackslashPattern.matcher(s);
 		if(matcher.matches()) {
 			return (matcher.groupCount() >= 1) ? matcher.group(1).trim() : s;

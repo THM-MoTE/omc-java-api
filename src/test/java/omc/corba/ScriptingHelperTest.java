@@ -67,13 +67,13 @@ public class ScriptingHelperTest {
 	}
 
 	@Test
-	public void killTrailingHyphensTest() {
+	public void killTrailingQuotesTest() {
 		String bckslsh = "\\";
 		String s = "\n\"eclipse is not pink! /tmp:4  \"";
-		assertEquals("eclipse is not pink! /tmp:4", killTrailingHyphens(s));
+		assertEquals("eclipse is not pink! /tmp:4", killTrailingQuotes(s));
 
 		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
-		assertEquals("Awesome test case", killTrailingHyphens(s2));
+		assertEquals("Awesome test case", killTrailingQuotes(s2));
 
 		String s3 = "\"Check of test completed successfully.\n"+
 		    "Class test has 2 equation(s) and 1 variable(s).\n"+
@@ -81,7 +81,7 @@ public class ScriptingHelperTest {
 
 		assertEquals("Check of test completed successfully.\n"+
         "Class test has 2 equation(s) and 1 variable(s).\n"+
-        "2 of these are trivial equation(s).", killTrailingHyphens(s3));
+        "2 of these are trivial equation(s).", killTrailingQuotes(s3));
 	}
 
 	@Test
