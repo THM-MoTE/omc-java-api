@@ -34,22 +34,25 @@ public final class ScriptingHelper {
 
 	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.\\s]+)+)");
 
-  private static final String withinRegex = "within\\s+([\\w\\._]+);";
-  private static final String modelRegex = "model\\s+([\\w_]+)";
-  private static final Pattern withinPattern = Pattern.compile(withinRegex);
-  private static final Pattern modelPattern = Pattern.compile(modelRegex);
+    private static final String withinRegex = "within\\s+([\\w\\._]+);";
+    private static final String modelRegex = "model\\s+([\\w_]+)";
+    private static final Pattern withinPattern = Pattern.compile(withinRegex);
+    private static final Pattern modelPattern = Pattern.compile(modelRegex);
 
 	private ScriptingHelper() {
 	}
 
+    /** Turns the given object into a modelica string. */
 	public static String asString(Object str) {
 		return "\"" + str.toString() + "\"";
 	}
 
+    /** Turns the given collection into an modelica array. */
 	public static String asArray(Collection<?> c) {
 		return "{" + asParameterList(c) + "}";
 	}
 
+    /** Turns the given collection into a modelica parameterlist. */
 	public static String asParameterList(Collection<?> c) {
 		if(c.isEmpty()) return "";
 		else {
@@ -59,18 +62,22 @@ public final class ScriptingHelper {
 		}
 	}
 
+    /** Turns the given collection into an modelica array of strings. */
 	public static String asStringArray(Collection<?> c) {
 		List<?> xs = c.stream().map(ScriptingHelper::asString)
 		    .collect(Collectors.toList());
 		return asArray(xs);
 	}
 
+    /** Turns the given collection into a modelica parameterlist of
+     *  strings using Object#toString(). */
 	public static String asStringParameterList(Collection<?> c) {
 		List<?> xs = c.stream().map(ScriptingHelper::asString)
 		    .collect(Collectors.toList());
 		return asParameterList(xs);
 	}
 
+    /** Removes trailing and leading quotes (&quot;) from `s`. */
 	public static String killTrailingHyphens(String s) {
 		Matcher matcher = hyphenBackslashPattern.matcher(s);
 		if(matcher.matches()) {
@@ -83,6 +90,9 @@ public final class ScriptingHelper {
 		}
 	}
 
+    /** Turns the given modelica expression - which should be an array -
+     *  into a List of Strings.
+     */
 	public static List<String> fromArray(String modelicaExpr) {
 		Matcher matcher = arrayPattern.matcher(modelicaExpr);
 		if(matcher.matches()) {
@@ -94,6 +104,10 @@ public final class ScriptingHelper {
 			return Collections.emptyList();
 	}
 
+    /** Returns the `name` of a model inside of `modelicaCode`.
+     * <P>Note: If there are more than one models the result is the
+     * first model. </P>
+     */
   public static Optional<String> getModelName(String modelicaCode) {
     Matcher withinMatcher = withinPattern.matcher(modelicaCode);
     Matcher modelMatcher = modelPattern.matcher(modelicaCode);
@@ -109,10 +123,14 @@ public final class ScriptingHelper {
       return Optional.empty();
   }
 
+    /** Returns the `name` of a model in the `file`.
+     *  @see ScriptingHelper#getModelName(String)
+     */
   public static Optional<String> getModelName(Path file) throws IOException {
     return getModelName(new String(Files.readAllBytes(file), Global.encoding));
   }
 
+    /** Extracts a path from the given string `str`. */
   public static Optional<String> extractPath(String str) {
     Matcher pathMatcher = pathPattern.matcher(str);
     if (pathMatcher.find()) {

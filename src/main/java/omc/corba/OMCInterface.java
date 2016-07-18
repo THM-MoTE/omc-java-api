@@ -21,10 +21,10 @@ import org.slf4j.Logger;
  * <p>
  *  Note: Java's CORBA-API uses the java.util.logging framework.
  *  If you use another logging framework (for example Logback) you should supress
- * logging from java.util.logging. It's not possible to control the JUC framework form another logging
+ * logging from java.util.logging. It's not possible to control the JUC framework from another logging
  * framework. SLF4J has an
  *  <a href="http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html">adapter</a>
- *  to route JUC logging into SLF4J.
+ *  to route JUC logging into SLF4J. Note that this adapter has performance issues!
  * </p>
  * <pre>
  * A typical workflow with implementations is:
@@ -65,6 +65,9 @@ public interface OMCInterface {
    */
   public void disconnect() throws IOException;
 
+    /** Calls the function `functionName` with the given arguments.
+     *  The arguments are converted into Strings using `toString()`.
+     */
   public default Result call(String functionName, Object... args) {
     String params =
       (args.length == 0) ? "()" : "("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
@@ -73,6 +76,10 @@ public interface OMCInterface {
   }
 
   // =========== API functions
+
+    /** Tests wether the `className` is a `type`.
+     *  This function prepends `is` to `type`.
+     */
   public default boolean is_(String type, String className) {
     String functionName = "is"+type;
     Result res = call(functionName, className);
@@ -82,6 +89,10 @@ public interface OMCInterface {
     }
   }
 
+    /** Calls the function `functionName` with the given arguments,
+     *  converting the result into a List of Strings.
+     *  <P> Note: If an error occurs the result is an empty list.</P>
+     */
   public default List<String> getList(String functionName, Object... args) {
     Result res = call(functionName, args);
     if(res.error.isPresent()) {
@@ -91,6 +102,8 @@ public interface OMCInterface {
     }
   }
 
+    /** Checks the model `modelName` with the scripting function checkModel().
+     */
   public default String checkModel(String modelName) {
     Result res = call("checkModel", modelName);
     if(res.error.isPresent()) {
@@ -100,6 +113,8 @@ public interface OMCInterface {
     }
   }
 
+    /** Checks the model `modelName` with the scripting function checkModelsRecursive().
+     */
   public default String checkAllModelsRecursive(String modelName) {
     Result res = call("checkAllModelsRecursive", modelName);
     if(res.error.isPresent()) {
@@ -109,6 +124,9 @@ public interface OMCInterface {
     }
   }
 
+    /** Returns the class informations about `className`.
+     * <P> Note: If an error occurs the result is empty.</P>
+     */
   public default Optional<String> getClassInformation(String className) {
     Result res = call("getClassInformation", className);
     return (res.error.isPresent()) ?
