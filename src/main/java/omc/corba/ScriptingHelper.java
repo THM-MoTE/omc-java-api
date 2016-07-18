@@ -26,9 +26,9 @@ public final class ScriptingHelper {
 	//regex voodoo; thumbs up for escaping the escape characters ;)
 	private static String bckslash = "\\\\";
 	//matches: \"Awesome test case\"
-	private static Pattern hyphenBackslashPattern = Pattern.compile("\n?"+bckslash+"\"(.*)"+bckslash+"\"\n?");
+	private static Pattern quoteBackslashPattern = Pattern.compile("\n?"+bckslash+"\"(.*)"+bckslash+"\"\n?");
 	//matches : "Awesome test case"
-	private static Pattern hyphenPattern = Pattern.compile("^\n?\"((.|\n)*)\"\n?$");
+	private static Pattern quotePattern = Pattern.compile("^\n?\"((.|\n)*)\"\n?$");
 
 	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
 
@@ -79,11 +79,11 @@ public final class ScriptingHelper {
 
     /** Removes trailing and leading quotes (&quot;) from `s`. */
 	public static String killTrailingHyphens(String s) {
-		Matcher matcher = hyphenBackslashPattern.matcher(s);
+		Matcher matcher = quoteBackslashPattern.matcher(s);
 		if(matcher.matches()) {
 			return (matcher.groupCount() >= 1) ? matcher.group(1).trim() : s;
 		} else {
-			Matcher matcher2 = hyphenPattern.matcher(s);
+			Matcher matcher2 = quotePattern.matcher(s);
 			if(matcher2.matches())
 				return (matcher2.groupCount() >= 1) ? matcher2.group(1).trim() : s;
 			else return s;
