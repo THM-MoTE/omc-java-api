@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -87,13 +84,22 @@ public class ScriptingHelperTest {
 	@Test
 	public void fromArrayTest() {
 		String s = "{nico, model, jenny, derb}";
-		String s2 = "\"{nico, model, jenny, derb}\"";
+		String s2 = "{nico, model, jenny, derb}";
 		List<String> exp = Arrays.asList("nico", "model", "jenny", "derb");
 		assertEquals(exp, fromArray(s));
 		assertEquals(exp, fromArray(s2));
 
-		String s3 = "\"{}\"";
+		String s3 = "{}";
 		assertEquals(Collections.emptyList(), fromArray(s3));
+
+		String s4 = "{\"model\",\"Ideal linear electrical resistor\",false,false,false,\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\",true,53,3,113,15,{},false,false,\"\",\"\"}";
+		List<String> exp2 = Arrays.asList(
+				"\"model\"",
+				"\"Ideal linear electrical resistor\"",
+				"false","false","false",
+				"\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
+				"true","53","3","113","15","{}","false","false","\"\"","\"\"");
+		assertEquals(exp2, fromArray(s4));
 	}
 
 	@Test

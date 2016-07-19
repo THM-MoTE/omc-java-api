@@ -26,12 +26,11 @@ public final class ScriptingHelper {
 	//regex voodoo; thumbs up for escaping the escape characters ;)
 	private static String bckslash = "\\\\";
 	//matches: \"Awesome test case\"
-	private static Pattern quoteBackslashPattern = Pattern.compile("\n?"+bckslash+"\"(.*)"+bckslash+"\"\n?");
+	private static Pattern quoteBackslashPattern = Pattern.compile("\n?"+bckslash+"\"((?:\n|.)*)"+bckslash+"\"\n?");
 	//matches : "Awesome test case"
-	private static Pattern quotePattern = Pattern.compile("^\n?\"((.|\n)*)\"\n?$");
+	private static Pattern quotePattern = Pattern.compile("^\n?\"((?:.|\n)*)\"\n?$");
 
-	private static Pattern arrayPattern = Pattern.compile(bckslash+"?\"?\\{(.*)\\}"+bckslash+"?\"?");
-
+	private static String arraySplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.\\s]+)+)");
 
     private static final String withinRegex = "within\\s+([\\w\\._]+);";
@@ -94,14 +93,15 @@ public final class ScriptingHelper {
      *  into a List of Strings.
      */
 	public static List<String> fromArray(String modelicaExpr) {
-		Matcher matcher = arrayPattern.matcher(modelicaExpr);
-		if(matcher.matches()) {
-			String group = matcher.group(1).trim();
-			return (group.isEmpty()) ?
-				Collections.emptyList() :
-				Arrays.stream(group.split(",")).map(String::trim).collect(Collectors.toList());
-		} else
-			return Collections.emptyList();
+		String[] subs = modelicaExpr.split(arraySplitRegex);
+		if(subs.length == 1 && (subs[0].equals("{}") || subs[0].trim().isEmpty())) return Collections.emptyList();
+		else {
+			String tmp = subs[0];
+			subs[0] = (tmp.startsWith("{")) ? tmp.substring(1) : tmp;
+			tmp = subs[subs.length - 1];
+			subs[subs.length - 1] = (tmp.endsWith("}")) ? tmp.substring(0, tmp.length() - 1) : tmp;
+			return Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
+		}
 	}
 
     /** Returns the `name` of a model inside of `modelicaCode`.
