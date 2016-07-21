@@ -195,7 +195,8 @@ public class OMCClient implements OMCInterface {
 
     try {
       Process process = pb.start();
-      log.debug("started {} {}", omcExecutable.get(), arg);
+      log.info("started {} {} - output redirecting to: {}",
+        omcExecutable.get(), arg, logFile);
       return process;
     } catch (IOException e) {
       log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir,  e);
