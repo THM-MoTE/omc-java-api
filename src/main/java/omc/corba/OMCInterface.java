@@ -43,6 +43,8 @@ import org.slf4j.Logger;
  */
 public interface OMCInterface {
   public static String GET_ERRORS = "getErrorString()";
+  public static String fallbackLocale = "en_US.UTF-8";
+  public static String localeEnvVariable = "LANG";
   public static final int maxTrys = 2;
   public static final int maxSleep = 3_000;
 

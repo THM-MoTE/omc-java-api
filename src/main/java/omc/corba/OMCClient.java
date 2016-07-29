@@ -10,6 +10,7 @@ import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.Map;
 
 import omc.Global;
 import omc.corba.idl.OmcCommunication;
@@ -21,6 +22,10 @@ import org.slf4j.LoggerFactory;
 
 /** Implementation of OMCInterface.
  *
+ * This implementation sets the language for omc using the given locale.
+ * If no locale is given the language is extracted from the environment
+ * variable identified by `OMCInterface.localeEnvVariable`.
+ * If this fails too the constant `OMCInterface.fallbackLocale` is used.
  * <p>
  * This implementation is based on <B>OpenModelica's system documentation</B> which is available here:
  * <a href="https://www.openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf">System Documentation</a>.
@@ -40,13 +45,31 @@ public class OMCClient implements OMCInterface {
   private boolean isConnected;
   private final Optional<String> omcExecutable;
   private Optional<Process> omcProcess = Optional.empty();
+  private final String omcLocale;
 
   public OMCClient() {
     omcExecutable = Optional.empty();
+    omcLocale = findLocale();
   }
 
   public OMCClient(String omcExec) {
     omcExecutable = Optional.of(omcExec);
+    omcLocale = findLocale();
+  }
+
+  public OMCClient(String omcExec, String locale) {
+    omcExecutable = Optional.of(omcExec);
+    omcLocale = locale;
+  }
+
+  private String findLocale() {
+    String systemLang = System.getenv("LANG");
+    if(systemLang != null)
+      return systemLang;
+    else {
+      log.warn("environment variable `LANG` undefined; using fallback locale: {}", fallbackLocale);
+      return fallbackLocale;
+    }
   }
 
   @Override
@@ -177,6 +200,10 @@ public class OMCClient implements OMCInterface {
       throw new IllegalStateException("unknown omc executable!");
 
     ProcessBuilder pb = new ProcessBuilder(omcExecutable.get(), arg);
+    //set environment
+    Map<String,String> env = pb.environment();
+    env.put(localeEnvVariable, omcLocale);
+
     Path omcWorkingDir = Global.tmpDir.resolve("omc_home");
     Path logFile = omcWorkingDir.resolve("omc.log");
     try {
@@ -195,8 +222,8 @@ public class OMCClient implements OMCInterface {
 
     try {
       Process process = pb.start();
-      log.info("started {} {} - output redirecting to: {}",
-        omcExecutable.get(), arg, logFile);
+      log.info("started {} {} - locale {} - output redirecting to: {}",
+        omcExecutable.get(), arg, omcLocale, logFile);
       return process;
     } catch (IOException e) {
       log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir,  e);

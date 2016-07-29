@@ -45,7 +45,7 @@ public class OMCClientTest {
 
   @Test
   public void convertToObjectTest() throws IOException {
-    OMCClient client = new OMCClient();
+    OMCClient client = new OMCClient("/usr/local/bin/omc", "de_DE.UTF-8");
     System.setProperty("os.name", "Linux");
     Path path = client.getObjectReferencePath();
     String content = client.readObjectReference(path);
@@ -57,7 +57,7 @@ public class OMCClientTest {
 
   @Test
   public void connectTest() throws IOException {
-    OMCClient client = new OMCClient();
+    OMCClient client = new OMCClient("/usr/local/bin/omc", "de_DE.UTF-8");
     client.connect();
     Result successResult = client.sendExpression("model test end test;");
     assertTrue(successResult.result.length() > 1);
@@ -70,13 +70,13 @@ public class OMCClientTest {
 
   @Test(expected = IllegalStateException.class)
   public void sendWithoutConnectTest() throws IOException {
-    OMCClient client = new OMCClient();
+    OMCClient client = new OMCClient("/usr/local/bin/omc", "de_DE.UTF-8");
     client.sendExpression("model t end t;");
   }
 
   @Test
   public void testErrors() throws IOException {
-    OMCClient client = new OMCClient();
+    OMCClient client = new OMCClient("/usr/local/bin/omc", "de_DE.UTF-8");
     client.connect();
     Result res = client.sendExpression("loadFle(\"testbla\")");
     assertTrue(res.error.isPresent());
@@ -87,7 +87,7 @@ public class OMCClientTest {
 
   @Test
   public void testExpressions() throws IOException {
-    OMCClient client = new OMCClient();
+    OMCClient client = new OMCClient("/usr/local/bin/omc", "en_US.UTF-8");
     client.connect();
     Result r = client.sendExpression("model test Real x = 0.0; end test;");
     assertEquals(new Result("{test}", Optional.empty()), r);
