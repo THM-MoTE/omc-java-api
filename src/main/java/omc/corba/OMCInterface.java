@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Represents a connection to omc over CORBA.
  *
@@ -41,40 +42,55 @@ import org.slf4j.Logger;
  *
  * @author Nicola Justus
  */
-public interface OMCInterface {
+public abstract class OMCInterface {
   public static String GET_ERRORS = "getErrorString()";
   public static String fallbackLocale = "en_US.UTF-8";
   public static String localeEnvVariable = "LANG";
   public static final int maxTrys = 2;
   public static final int maxSleep = 3_000;
 
+  protected final Logger log;
+
+  public OMCInterface() {
+    log = LoggerFactory.getLogger(OMCInterface.class);
+  }
+
+  public OMCInterface(Logger log) {
+    this.log = log;
+  }
+
   /**
    * Sends the given expression to omc &amp; returning the result from omc.
    * @param expression a modelica-expression
    * @return answer from omc
    */
-  public Result sendExpression(String expression);
+  public abstract Result sendExpression(String expression);
   /**
    * Connects this client to omc.
    * @see OMCInterface#disconnect()
    * @throws IOException if an io-error occurs
    */
-  public void connect() throws IOException;
+  public abstract void connect() throws IOException;
   /**
    * Disconnects this client from omc.
    * @see OMCInterface#connect()
    * @throws IOException if an io-error occurs
    */
-  public void disconnect() throws IOException;
+  public abstract void disconnect() throws IOException;
 
     /** Calls the function `functionName` with the given arguments.
      *  The arguments are converted into Strings using `toString()`.
      */
-  public default Result call(String functionName, Object... args) {
+  public Result call(String functionName, Object... args) {
     String params =
       (args.length == 0) ? "()" : "("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
     String expr = functionName + params;
-    return sendExpression(expr);
+    Result res = sendExpression(expr);
+    if(res.error.isPresent())
+      log.warn("calling {} returned: {}", expr, res.error.get());
+    else
+      log.debug("calling {} returned: {}", expr, res.result);
+  return res;
   }
 
   // =========== API functions
@@ -82,7 +98,7 @@ public interface OMCInterface {
     /** Tests wether the `className` is a `type`.
      *  This function prepends `is` to `type`.
      */
-  public default boolean is_(String type, String className) {
+  public boolean is_(String type, String className) {
     String functionName = "is"+type;
     Result res = call(functionName, className);
     if(res.error.isPresent()) return false;
@@ -95,7 +111,7 @@ public interface OMCInterface {
      *  converting the result into a List of Strings.
      *  <P> Note: If an error occurs the result is an empty list.</P>
      */
-  public default List<String> getList(String functionName, Object... args) {
+  public List<String> getList(String functionName, Object... args) {
     Result res = call(functionName, args);
     if(res.error.isPresent()) {
       return Collections.emptyList();
@@ -106,7 +122,7 @@ public interface OMCInterface {
 
     /** Checks the model `modelName` with the scripting function checkModel().
      */
-  public default String checkModel(String modelName) {
+  public String checkModel(String modelName) {
     Result res = call("checkModel", modelName);
     if(res.error.isPresent()) {
       return res.error.get();
@@ -117,7 +133,7 @@ public interface OMCInterface {
 
     /** Checks the model `modelName` with the scripting function checkModelsRecursive().
      */
-  public default String checkAllModelsRecursive(String modelName) {
+  public String checkAllModelsRecursive(String modelName) {
     Result res = call("checkAllModelsRecursive", modelName);
     if(res.error.isPresent()) {
       return res.error.get();
@@ -129,7 +145,7 @@ public interface OMCInterface {
     /** Returns the class informations about `className`.
      * <P> Note: If an error occurs the result is empty.</P>
      */
-  public default Optional<String> getClassInformation(String className) {
+  public Optional<String> getClassInformation(String className) {
     Result res = call("getClassInformation", className);
     return (res.error.isPresent()) ?
             Optional.empty() :

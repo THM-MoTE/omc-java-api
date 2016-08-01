@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * @author Nicola Justus
  */
-public class OMCClient implements OMCInterface {
-  private final Logger log = LoggerFactory.getLogger(OMCClient.class);
+public class OMCClient extends OMCInterface {
   private OmcCommunication omc;
   private Optional<ORB> orbOpt = Optional.empty();
   private boolean isConnected;
@@ -48,16 +47,19 @@ public class OMCClient implements OMCInterface {
   private final String omcLocale;
 
   public OMCClient() {
+    super();
     omcExecutable = Optional.empty();
     omcLocale = findLocale();
   }
 
   public OMCClient(String omcExec) {
+    super();
     omcExecutable = Optional.of(omcExec);
     omcLocale = findLocale();
   }
 
   public OMCClient(String omcExec, String locale) {
+    super();
     omcExecutable = Optional.of(omcExec);
     omcLocale = locale;
   }
