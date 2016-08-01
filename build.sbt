@@ -12,5 +12,5 @@ lazy val root = Project(id = "omc-java-api", base = file(".")).
   )
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
-libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
 autoScalaLibrary := false
