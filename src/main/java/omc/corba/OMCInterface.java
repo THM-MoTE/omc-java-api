@@ -5,6 +5,7 @@
 package omc.corba;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -150,5 +151,9 @@ public abstract class OMCInterface {
     return (res.error.isPresent()) ?
             Optional.empty() :
             Optional.of(res.result);
+  }
+
+  public Result cd(Path path) {
+    return call("cd", ScriptingHelper.asString(path.toString().replace("\\", "\\\\")));
   }
 }
