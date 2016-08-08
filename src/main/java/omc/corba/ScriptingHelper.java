@@ -145,4 +145,8 @@ public final class ScriptingHelper {
 			return asString(path.replace("\\", "\\\\"));
 		else return asString(path);
 	}
+
+	public static String convertPath(Path path) {
+		return convertPath(path.toString());
+	}
 }
