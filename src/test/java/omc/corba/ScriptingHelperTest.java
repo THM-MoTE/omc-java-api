@@ -130,4 +130,21 @@ public class ScriptingHelperTest {
     assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("/home/nico/blup.txt"));
     assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("truefalse,true\"/home/nico/blup.txt\"cksiqichökajs"));
   }
+
+	@Test
+	public void asPathTest() {
+		System.setProperty("os.name", "Linux");
+		assertTrue("`os.name` couldn't set to `Linux`", System.getProperty("os.name") == "Linux");
+
+		String path1 = "/home/user/Dokumente/Docs";
+		String winPath = "C:\\Users\\chris\\Documents\\year";
+		assertEquals("\""+path1+"\"", convertPath(path1));
+		assertEquals("\""+winPath+"\"", convertPath(winPath));
+
+		System.setProperty("os.name", "Windows");
+		assertTrue("`os.name` couldn't set to `Windows`", System.getProperty("os.name") == "Windows");
+
+		assertEquals("\"C:\\\\Users\\\\chris\\\\Documents\\\\year\"", convertPath(winPath));
+		assertEquals("\""+path1+"\"", convertPath(path1));
+	}
 }

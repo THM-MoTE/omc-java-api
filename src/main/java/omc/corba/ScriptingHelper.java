@@ -139,4 +139,10 @@ public final class ScriptingHelper {
     } else
       return Optional.empty();
   }
+
+	public static String convertPath(String path) {
+		if(Global.isWindowsOS())
+			return asString(path.replace("\\", "\\\\"));
+		else return asString(path);
+	}
 }
