@@ -154,6 +154,6 @@ public abstract class OMCInterface {
   }
 
   public Result cd(Path path) {
-    return call("cd", ScriptingHelper.asString(path.toString().replace("\\", "\\\\")));
+    return call("cd", ScriptingHelper.convertPath(path));
   }
 }
