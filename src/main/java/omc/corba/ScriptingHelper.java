@@ -31,7 +31,7 @@ public final class ScriptingHelper {
 	private static Pattern quotePattern = Pattern.compile("^\n?\"((?:.|\n)*)\"\n?$");
 
 	private static String arraySplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
-	private static Pattern pathPattern = Pattern.compile("((\\/[\\w\\-\\.\\s]+)+)");
+	private static Pattern pathPattern = Pattern.compile("((?:\\w:)?(((?:\\/|\\\\)[\\w\\-\\.\\s]+)+))");
 
     private static final String withinRegex = "within\\s+([\\w\\._]+);";
     private static final String modelRegex = "(?:(?:model)|(?:class)|(?:package)|(?:function))\\s+([\\w_]+)";

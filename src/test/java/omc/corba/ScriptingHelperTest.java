@@ -126,9 +126,11 @@ public class ScriptingHelperTest {
   @Test
   public void extractPathTest() {
     String test = "(\"package\",\"\",false,false,false,\"/Users/nico/2014-modelica-kotani/SHM/package.mo\",false,2,1,6,8,{},false,false,\"\",\"\")";
-    assertEquals(Optional.of("/Users/nico/2014-modelica-kotani/SHM/package.mo"),extractPath(test));
+		String winTest = "this is a test,C:\\Documents\\user\\test.mo,superstring";
+		assertEquals(Optional.of("/Users/nico/2014-modelica-kotani/SHM/package.mo"),extractPath(test));
     assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("/home/nico/blup.txt"));
     assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("truefalse,true\"/home/nico/blup.txt\"cksiqichökajs"));
+    assertEquals(Optional.of("C:\\Documents\\user\\test.mo"),extractPath(winTest));
   }
 
 	@Test
