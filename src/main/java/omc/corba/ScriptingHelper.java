@@ -34,7 +34,7 @@ public final class ScriptingHelper {
 	private static Pattern pathPattern = Pattern.compile("((?:\\w:)?(((?:\\/|\\\\)[\\w\\-\\.\\s]+)+))");
 
     private static final String withinRegex = "within\\s+([\\w\\._]+);";
-    private static final String modelRegex = "(?:(?:model)|(?:class)|(?:package)|(?:function))\\s+([\\w_]+)";
+    private static final String modelRegex = "(?:(?:model)|(?:class)|(?:package)|(?:function))\\s+([\\w\\d_]+)";
     private static final Pattern withinPattern = Pattern.compile(withinRegex);
     private static final Pattern modelPattern = Pattern.compile(modelRegex);
 
