@@ -87,11 +87,8 @@ public abstract class OMCInterface {
       (args.length == 0) ? "()" : "("+ ScriptingHelper.asParameterList(Arrays.asList(args)) +")";
     String expr = functionName + params;
     Result res = sendExpression(expr);
-    if(res.error.isPresent())
-      log.warn("calling {} returned: {}", expr, res.error.get());
-    else
-      log.debug("calling {} returned: {}", expr, res.result);
-  return res;
+    log.debug("calling {} returned: {}", expr, res.result);
+    return res;
   }
 
   // =========== API functions
