@@ -37,7 +37,7 @@ public final class ScriptingHelper {
     private static final String modelRegex =
 			"(?:(?:model)|(?:class)|(?:package)|(?:function)|(?:connector))\\s+([\\w\\d_]+)";
     private static final Pattern withinPattern = Pattern.compile(withinRegex);
-    private static final Pattern modelPattern = Pattern.compile(modelRegex);
+    public static final Pattern modelPattern = Pattern.compile(modelRegex);
 
 	private ScriptingHelper() {
 	}
