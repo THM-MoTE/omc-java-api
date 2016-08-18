@@ -32,7 +32,7 @@ This library uses the [slf4j](http://www.slf4j.org/) api for logging.
 Provide a proper logging-framework for controlling logging output, for example [logback](http://logback.qos.ch/).
 
 # Notes
-- This implementaion is based on OpenModelica's
+- This implementation is based on OpenModelica's
   [System Documentation V. 2013-01-28](https://openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf)
 - omc's scripting-API is documented at
   [API](https://build.openmodelica.org/Documentation/OpenModelica.Scripting.html)
