@@ -31,6 +31,12 @@ The helpers avoid common pitfalls like missing ```"```, ```,``` ```{```, etc.
 This library uses the [slf4j](http://www.slf4j.org/) api for logging.
 Provide a proper logging-framework for controlling logging output, for example [logback](http://logback.qos.ch/).
 
+# License
+Because of OpenModelica's restrictions this library is distributed under
+the terms of the **GNU General Public License Version 3.0**.
+For more information see the LICENSE and the
+[OpenModelica License](https://github.com/OpenModelica/OMCompiler/blob/master/COPYING).
+
 # Notes
 - This implementation is based on OpenModelica's
   [System Documentation V. 2013-01-28](https://openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf)
