@@ -22,87 +22,85 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
+
 import static omc.corba.ScriptingHelper.*;
 
 public class ScriptingHelperTest {
 
-	@Test
+	@Test()
 	public void asStringTest() {
-		assertEquals("\"test\"", asString("test"));
-		assertEquals("\"6.4\"", asString(6.4));
-		assertEquals("\"tmp/nico\"", asString(Paths.get("tmp/nico")));
+		assertEquals(asString("test"), "\"test\"");
+		assertEquals(asString(6.4), "\"6.4\"");
+		assertEquals(asString(Paths.get("tmp/nico")), "\"tmp/nico\"");
 	}
 
-	@Test
+	@Test()
 	public void asParameterListTest() {
 		List<String> xs = Arrays.asList("tmp", "pink", "cyan", "eclipse");
-		assertEquals("tmp, pink, cyan, eclipse", asParameterList(xs));
+		assertEquals(asParameterList(xs), "tmp, pink, cyan, eclipse");
 
 		List<Integer> numbers = Arrays.asList(6, 5, 8, 9, 10);
-		assertEquals("6, 5, 8, 9, 10", asParameterList(numbers));
+		assertEquals(asParameterList(numbers), "6, 5, 8, 9, 10");
 	}
 
-	@Test
+	@Test()
 	public void asArrayTest() {
 		List<String> xs = Arrays.asList("tmp", "pink", "cyan", "eclipse");
-		assertEquals("{tmp, pink, cyan, eclipse}", asArray(xs));
+		assertEquals(asArray(xs), "{tmp, pink, cyan, eclipse}");
 
 		List<Integer> numbers = Arrays.asList(6, 5, 8, 9, 10);
-		assertEquals("{6, 5, 8, 9, 10}", asArray(numbers));
+		assertEquals(asArray(numbers), "{6, 5, 8, 9, 10}");
 	}
 
-	@Test
+	@Test()
 	public void asStringArrayTest() {
 		List<String> xs = Arrays.asList("tmp", "pink", "cyan", "eclipse");
-		assertEquals("{\"tmp\", \"pink\", \"cyan\", \"eclipse\"}",
-		    asStringArray(xs));
+		assertEquals(asStringArray(xs), "{\"tmp\", \"pink\", \"cyan\", \"eclipse\"}");
 
 		List<Integer> numbers = Arrays.asList(6, 5, 8, 9, 10);
-		assertEquals("{\"6\", \"5\", \"8\", \"9\", \"10\"}", asStringArray(numbers));
+		assertEquals(asStringArray(numbers), "{\"6\", \"5\", \"8\", \"9\", \"10\"}");
 	}
 
-	@Test
+	@Test()
 	public void asStringParameterListTest() {
 		List<String> xs = Arrays.asList("tmp", "pink", "cyan", "eclipse");
-		assertEquals("\"tmp\", \"pink\", \"cyan\", \"eclipse\"",
-		    asStringParameterList(xs));
+		assertEquals(asStringParameterList(xs), "\"tmp\", \"pink\", \"cyan\", \"eclipse\"");
 
 		List<Integer> numbers = Arrays.asList(6, 5, 8, 9, 10);
-		assertEquals("\"6\", \"5\", \"8\", \"9\", \"10\"",
-		    asStringParameterList(numbers));
+		assertEquals(asStringParameterList(numbers), "\"6\", \"5\", \"8\", \"9\", \"10\"");
 	}
 
-	@Test
+	@Test()
 	public void killTrailingQuotesTest() {
 		String bckslsh = "\\";
 		String s = "\n\"eclipse is not pink! /tmp:4  \"";
-		assertEquals("eclipse is not pink! /tmp:4", killTrailingQuotes(s));
+		assertEquals(killTrailingQuotes(s), "eclipse is not pink! /tmp:4");
 
 		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
-		assertEquals("Awesome test case", killTrailingQuotes(s2));
+		assertEquals(killTrailingQuotes(s2), "Awesome test case");
 
 		String s3 = "\"Check of test completed successfully.\n"+
 		    "Class test has 2 equation(s) and 1 variable(s).\n"+
 		    "2 of these are trivial equation(s).\"";
 
-		assertEquals("Check of test completed successfully.\n"+
+		assertEquals(killTrailingQuotes(s3), "Check of test completed successfully.\n"+
         "Class test has 2 equation(s) and 1 variable(s).\n"+
-        "2 of these are trivial equation(s).", killTrailingQuotes(s3));
+        "2 of these are trivial equation(s).");
 	}
 
-	@Test
+	@Test()
 	public void fromArrayTest() {
 		String s = "{nico, model, jenny, derb}";
 		String s2 = "{nico, model, jenny, derb}";
 		List<String> exp = Arrays.asList("nico", "model", "jenny", "derb");
-		assertEquals(exp, fromArray(s));
-		assertEquals(exp, fromArray(s2));
+		assertEquals(fromArray(s), exp);
+		assertEquals(fromArray(s2), exp);
 
 		String s3 = "{}";
-		assertEquals(Collections.emptyList(), fromArray(s3));
+		assertEquals(fromArray(s3), Collections.emptyList());
 
 		String s4 = "{\"model\",\"Ideal linear electrical resistor\",false,false,false,\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\",true,53,3,113,15,{},false,false,\"\",\"\"}";
 		List<String> exp2 = Arrays.asList(
@@ -111,54 +109,54 @@ public class ScriptingHelperTest {
 				"false","false","false",
 				"\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
 				"true","53","3","113","15","{}","false","false","\"\"","\"\"");
-		assertEquals(exp2, fromArray(s4));
+		assertEquals(fromArray(s4), exp2);
 	}
 
-	@Test
+	@Test()
 	public void getModelNameTest() {
 	  String test = "model test\nReal x = 1;\nend test;";
-	  assertEquals(Optional.of("test"), getModelName(test));
+	  assertEquals(getModelName(test), Optional.of("test"));
 
    String test2 = "this is a tst file";
-   assertEquals(Optional.empty(), getModelName(test2));
+   assertEquals(getModelName(test2), Optional.empty());
 
    String test3 = "within modelica.nico.test;\nmodel Baroreceptor \"a wonderfull comment\"\nend Baroreceptor;";
-   assertEquals(Optional.of("modelica.nico.test.Baroreceptor"), getModelName(test3));
+   assertEquals(getModelName(test3), Optional.of("modelica.nico.test.Baroreceptor"));
 	}
 
-	@Test
+	@Test()
 	public void getModelNameFromPathTest() throws URISyntaxException, IOException {
 	  Path file1 = Paths.get(getClass().getClassLoader().getResource("ResistorTest.mo").toURI());
 	  Path file2 = Paths.get(getClass().getClassLoader().getResource("ResistorTest2.mo").toURI());
 
-	  assertEquals(Optional.of("ResistorTest"), getModelName(file1));
-	  assertEquals(Optional.of("nico.components.ResistorTest"), getModelName(file2));
+	  assertEquals(getModelName(file1), Optional.of("ResistorTest"));
+	  assertEquals(getModelName(file2), Optional.of("nico.components.ResistorTest"));
 	}
 
-  @Test
+  @Test()
   public void extractPathTest() {
     String test = "(\"package\",\"\",false,false,false,\"/Users/nico/2014-modelica-kotani/SHM/package.mo\",false,2,1,6,8,{},false,false,\"\",\"\")";
 		String winTest = "this is a test,C:\\Documents\\user\\test.mo,superstring";
-		assertEquals(Optional.of("/Users/nico/2014-modelica-kotani/SHM/package.mo"),extractPath(test));
-    assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("/home/nico/blup.txt"));
-    assertEquals(Optional.of("/home/nico/blup.txt"),extractPath("truefalse,true\"/home/nico/blup.txt\"cksiqichökajs"));
-    assertEquals(Optional.of("C:\\Documents\\user\\test.mo"),extractPath(winTest));
+		assertEquals(extractPath(test), Optional.of("/Users/nico/2014-modelica-kotani/SHM/package.mo"));
+    assertEquals(extractPath("/home/nico/blup.txt"), Optional.of("/home/nico/blup.txt"));
+    assertEquals(extractPath("truefalse,true\"/home/nico/blup.txt\"cksiqichökajs"), Optional.of("/home/nico/blup.txt"));
+    assertEquals(extractPath(winTest), Optional.of("C:\\Documents\\user\\test.mo"));
   }
 
-	@Test
+	@Test()
 	public void asPathTest() {
 		System.setProperty("os.name", "Linux");
-		assertTrue("`os.name` couldn't set to `Linux`", System.getProperty("os.name") == "Linux");
+		assertTrue(System.getProperty("os.name") == "Linux", "`os.name` couldn't set to `Linux`");
 
 		String path1 = "/home/user/Dokumente/Docs";
 		String winPath = "C:\\Users\\chris\\Documents\\year";
-		assertEquals("\""+path1+"\"", convertPath(path1));
-		assertEquals("\""+winPath+"\"", convertPath(winPath));
+		assertEquals(convertPath(path1), "\""+path1+"\"");
+		assertEquals(convertPath(winPath), "\""+winPath+"\"");
 
 		System.setProperty("os.name", "Windows");
-		assertTrue("`os.name` couldn't set to `Windows`", System.getProperty("os.name") == "Windows");
+		assertTrue(System.getProperty("os.name") == "Windows", "`os.name` couldn't set to `Windows`");
 
-		assertEquals("\"C:\\\\Users\\\\chris\\\\Documents\\\\year\"", convertPath(winPath));
-		assertEquals("\""+path1+"\"", convertPath(path1));
+		assertEquals(convertPath(winPath), "\"C:\\\\Users\\\\chris\\\\Documents\\\\year\"");
+		assertEquals(convertPath(path1), "\""+path1+"\"");
 	}
 }
