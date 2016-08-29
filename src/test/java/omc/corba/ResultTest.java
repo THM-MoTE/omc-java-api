@@ -18,37 +18,36 @@ package omc.corba;
 
 import java.util.Optional;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 public class ResultTest {
 
-  @Test
+  @Test()
   public void toStringTest() {
     Result result = new Result("test", Optional.empty());
-    assertEquals("Result [result=test, error="+Optional.empty().toString()+"]", result.toString());
+    assertEquals(result.toString(), "Result [result=test, error="+Optional.empty().toString()+"]");
     Result result2 = new Result("nico", Optional.of("an error"));
-    assertEquals("Result [result=nico, error="+Optional.of("an error").toString()+"]", result2.toString());
+    assertEquals(result2.toString(), "Result [result=nico, error="+Optional.of("an error").toString()+"]");
   }
 
-  @Test
+  @Test()
   public void equalsTest() {
     Result result = new Result("test", Optional.empty());
     Result result2 = new Result("test", Optional.empty());
     Result result3 = new Result("test", Optional.of("bla"));
     Result result4 = new Result("bla", Optional.of("bla2"));
-    assertEquals(result, result2);
-    assertNotEquals(result, result3);
-    assertNotEquals(result, result4);
+    assertEquals(result2, result);
+    assertNotEquals(result3, result);
+    assertNotEquals(result4, result);
   }
 
-  @Test
+  @Test()
   public void hashCodeTest() {
     Result result = new Result("test", Optional.empty());
     Result result2 = new Result("test", Optional.empty());
     Result result3 = new Result("test", Optional.of("bla"));
-    assertEquals(result.hashCode(), result2.hashCode());
-    assertNotEquals(result.hashCode(), result3.hashCode());
+    assertEquals(result2.hashCode(), result.hashCode());
+    assertNotEquals(result3.hashCode(), result.hashCode());
   }
 }
