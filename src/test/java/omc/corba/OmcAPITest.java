@@ -16,26 +16,25 @@
 
 package omc.corba;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterTest;
 
 public class OmcAPITest {
   private OMCInterface omc;
-  @Before
+  @BeforeTest
   public void initClient() throws IOException {
     omc = new OMCClient("/usr/local/bin/omc", "en_US.UTF-8");
     omc.connect();
   }
-  @After
+  @AfterTest
   public void stopClient() throws IOException {
     omc.disconnect();
   }
@@ -53,8 +52,8 @@ public class OmcAPITest {
   public void getListTest() throws ConnectException, IOException {
     omc.call("clear");
     omc.sendExpression("model test end test;");
-    assertEquals(Arrays.asList("test"), omc.getList("getClassNames"));
-    assertEquals(Collections.emptyList(), omc.getList("getPackages"));
+    assertEquals(omc.getList("getClassNames"), Arrays.asList("test"));
+    assertEquals(omc.getList("getPackages"), Collections.emptyList());
   }
 
   @Test
@@ -62,10 +61,10 @@ public class OmcAPITest {
     omc.call("clear");
     omc.sendExpression("model test Intger x; equation x = 0.5; end test;");
     String exp = "[<interactive>:1:12-1:19:writable] Error: Class Intger not found in scope test.\nError: Error occurred while flattening model test";
-    assertEquals(exp, omc.checkModel("test"));
+    assertEquals(omc.checkModel("test"), exp);
     omc.sendExpression("model test2 Integer x; equation x = 1; end test2;");
     String exp2 = "\"Check of test2 completed successfully.\nClass test2 has 1 equation(s) and 1 variable(s).\n1 of these are trivial equation(s).\"";
-    assertEquals(exp2, omc.checkModel("test2"));
+    assertEquals(omc.checkModel("test2"), exp2);
   }
 
   @Test
