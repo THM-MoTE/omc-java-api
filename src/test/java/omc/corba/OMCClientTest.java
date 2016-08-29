@@ -16,7 +16,10 @@
 
 package omc.corba;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,7 +28,7 @@ import java.util.Optional;
 
 import omc.corba.idl.OmcCommunication;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class OMCClientTest {
   @Test
@@ -34,16 +37,13 @@ public class OMCClientTest {
     Path path = Paths.get(System.getProperty("java.io.tmpdir"));
     System.setProperty("os.name", "Linux");
     String username = System.getProperty("user.name");
-    assertEquals(path.resolve("openmodelica." + username + ".objid"),
-        client.getObjectReferencePath());
+    assertEquals(client.getObjectReferencePath(), path.resolve("openmodelica." + username + ".objid"));
 
     System.setProperty("os.name", "Mac");
-    assertEquals(path.resolve("openmodelica." + username + ".objid"),
-        client.getObjectReferencePath());
+    assertEquals(client.getObjectReferencePath(), path.resolve("openmodelica." + username + ".objid"));
 
     System.setProperty("os.name", "Windows");
-    assertEquals(path.resolve("openmodelica.objid"),
-        client.getObjectReferencePath());
+    assertEquals(client.getObjectReferencePath(), path.resolve("openmodelica.objid"));
   }
 
   @Test
@@ -80,7 +80,7 @@ public class OMCClientTest {
     assertFalse(errorResult.error.isPresent());
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expectedExceptions = IllegalStateException.class)
   public void sendWithoutConnectTest() throws IOException {
     OMCClient client = new OMCClient("/usr/local/bin/omc", "de_DE.UTF-8");
     client.sendExpression("model t end t;");
@@ -102,13 +102,13 @@ public class OMCClientTest {
     OMCClient client = new OMCClient("/usr/local/bin/omc", "en_US.UTF-8");
     client.connect();
     Result r = client.sendExpression("model test Real x = 0.0; end test;");
-    assertEquals(new Result("{test}", Optional.empty()), r);
+    assertEquals(r, new Result("{test}", Optional.empty()));
 
     String resString = "\"Check of test completed successfully.\n" +
             "Class test has 1 equation(s) and 1 variable(s).\n" +
             "1 of these are trivial equation(s).\"";
     Result r2 = client.sendExpression("checkModel(test)");
-    assertEquals(new Result(resString, Optional.empty()), r2);
+    assertEquals(r2, new Result(resString, Optional.empty()));
   }
 
   @Test
@@ -116,6 +116,6 @@ public class OMCClientTest {
     OMCClient client = new OMCClient();
     client.connect();
     Result res = client.call("loadFile", "\"testi\"");
-    assertEquals("false", res.result);
+    assertEquals(res.result, "false");
   }
 }
