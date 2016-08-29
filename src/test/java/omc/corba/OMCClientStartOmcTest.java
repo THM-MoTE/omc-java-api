@@ -16,7 +16,8 @@
 
 package omc.corba;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,18 +26,16 @@ import java.nio.file.Files;
 
 import omc.Global;
 
-import org.junit.Test;
-
 public class OMCClientStartOmcTest {
 
-  @Test(expected = ConnectException.class)
+  @Test(expectedExceptions = ConnectException.class)
   public void testNotStartingOMC() throws ConnectException, IOException {
     OMCClient omc = new OMCClient();
     omc.connect();
     omc.disconnect();
   }
 
-  @Test
+  @Test()
   public void testNoCorbaRefFound() throws ConnectException, IOException {
     OMCClient omc = new OMCClient();
     Files.deleteIfExists(omc.getObjectReferencePath());
@@ -48,7 +47,7 @@ public class OMCClientStartOmcTest {
     }
   }
 
-  @Test
+  @Test()
   public void testNoCorbaRefFoundSubProcess() throws ConnectException, IOException {
     OMCClient omc = new OMCClient("/usr/local/bin/omc");
     Files.deleteIfExists(omc.getObjectReferencePath());
@@ -56,13 +55,13 @@ public class OMCClientStartOmcTest {
     omc.disconnect();
   }
 
-  @Test
+  @Test()
   public void testStartingOMC() throws ConnectException, IOException, InterruptedException {
     OMCClient omc = new OMCClient("/usr/local/bin/omc");
     omc.connect();
 
     Result result = omc.sendExpression("model t end t;");
-    assertEquals("{t}", result.result);
+    assertEquals(result.result, "{t}");
 
     omc.disconnect();
   }
