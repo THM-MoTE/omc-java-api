@@ -1,0 +1,13 @@
+Used libraries:
+    == Simple Logging Facade for Java (SLF4J) ==
+    Homepage: http://www.slf4j.org
+    License: MIT (http://www.slf4j.org/license.html)
+
+    == TestNG ==
+    Homepage: http://testng.org/doc/index.html
+    License: Apache License v2 (http://testng.org/license/)
+
+    == Logback ==
+    Homepage: http://logback.qos.ch/
+    License: LGPL 2.1 (http://logback.qos.ch/license.html)
+
