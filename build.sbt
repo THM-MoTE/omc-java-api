@@ -19,6 +19,8 @@ lazy val root = Project(id = "omc-java-api", base = file(".")).
     javacOptions ++= Seq("-source", "1.8")
   )
 
+resolvers += Resolver.jcenterRepo
+
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
 libraryDependencies += "org.testng" % "testng" % "6.9.12" % Test
 autoScalaLibrary := false
