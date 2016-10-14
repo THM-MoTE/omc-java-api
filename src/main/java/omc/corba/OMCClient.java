@@ -74,13 +74,13 @@ public class OMCClient extends OMCInterface {
     this(omcExec.toString());
   }
 
-  public OMCClient(String omcExec, String locale) {
+  public OMCClient(Path omcExec, String locale) {
     this(omcExec.toString(), locale);
   }
 
-  public OMCClient(Path omcExec, String locale) {
+  public OMCClient(String omcExec, String locale) {
     super();
-    omcExecutable = Optional.of(omcExec.toString());
+    omcExecutable = Optional.of(omcExec);
     omcLocale = locale;
   }
 
