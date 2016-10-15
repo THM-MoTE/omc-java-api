@@ -76,10 +76,10 @@ public class ScriptingHelperTest {
 	@Test()
 	public void killTrailingQuotesTest() {
 		String bckslsh = "\\";
-		String s = "\n\"eclipse is not pink! /tmp:4  \"";
+		String s = "\"\neclipse is not pink! /tmp:4  \"";
 		assertEquals(killTrailingQuotes(s), "eclipse is not pink! /tmp:4");
 
-		String s2 = "\n"+bckslsh+"\"Awesome test case"+bckslsh+"\"\n";
+		String s2 = "\"\nAwesome test case\n\"";
 		assertEquals(killTrailingQuotes(s2), "Awesome test case");
 
 		String s3 = "\"Check of test completed successfully.\n"+

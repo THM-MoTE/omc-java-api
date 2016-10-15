@@ -37,10 +37,11 @@ import omc.Global;
 public final class ScriptingHelper {
 	//regex voodoo; thumbs up for escaping the escape characters ;)
 	private static String bckslash = "\\\\";
-	//matches: \"Awesome test case\"
-	private static Pattern quoteBackslashPattern = Pattern.compile("\n?"+bckslash+"\"((?:\n|.)*)"+bckslash+"\"\n?");
-	//matches : "Awesome test case"
-	private static Pattern quotePattern = Pattern.compile("^\n?\"((?:.|\n)*)\"\n?$");
+
+	//matches: ["this is a test"] AND [this is a test]
+	private static Pattern quotePattern = Pattern.compile("^\"((?:.|\\n)+)\"$");
+	//matches: [{}] AND [{bla, "blup", hans}]
+	private static Pattern extractArrayPattern = Pattern.compile("^\\{((?:.|\\n)*)\\}$");
 
 	private static String arraySplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static Pattern pathPattern = Pattern.compile("((?:\\w:)?(((?:\\/|\\\\)[\\w\\-\\.\\s]+)+))");
@@ -91,14 +92,11 @@ public final class ScriptingHelper {
 
     /** Removes trailing and leading quotes (&quot;) from `s`. */
 	public static String killTrailingQuotes(String s) {
-		Matcher matcher = quoteBackslashPattern.matcher(s);
+		Matcher matcher = quotePattern.matcher(s);
 		if(matcher.matches()) {
-			return (matcher.groupCount() >= 1) ? matcher.group(1).trim() : s;
+			return matcher.group(1).trim();
 		} else {
-			Matcher matcher2 = quotePattern.matcher(s);
-			if(matcher2.matches())
-				return (matcher2.groupCount() >= 1) ? matcher2.group(1).trim() : s;
-			else return s;
+			return s.trim();
 		}
 	}
 
@@ -106,15 +104,12 @@ public final class ScriptingHelper {
      *  into a List of Strings.
      */
 	public static List<String> fromArray(String modelicaExpr) {
-		String[] subs = modelicaExpr.split(arraySplitRegex);
-		if(subs.length == 1 && (subs[0].equals("{}") || subs[0].trim().isEmpty())) return Collections.emptyList();
-		else {
-			String tmp = subs[0];
-			subs[0] = (tmp.startsWith("{")) ? tmp.substring(1) : tmp;
-			tmp = subs[subs.length - 1];
-			subs[subs.length - 1] = (tmp.endsWith("}")) ? tmp.substring(0, tmp.length() - 1) : tmp;
-			return Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
-		}
+			Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
+			matcher.find();
+			String extractedArray = matcher.group(1);
+			String[] subs = extractedArray.split(arraySplitRegex);
+			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
+				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
 	}
 
     /** Returns the `name` of a model inside of `modelicaCode`.
