@@ -93,7 +93,8 @@ public final class ScriptingHelper {
     /** Removes trailing and leading quotes (&quot;) from `s`. */
 	public static String killTrailingQuotes(String s) {
 		Matcher matcher = quotePattern.matcher(s);
-		if(matcher.matches()) {
+		if(s.equals("\"\"")) return "";
+		else if(matcher.matches()) {
 			return matcher.group(1).trim();
 		} else {
 			return s.trim();

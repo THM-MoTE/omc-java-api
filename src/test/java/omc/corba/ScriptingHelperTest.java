@@ -89,6 +89,9 @@ public class ScriptingHelperTest {
 		assertEquals(killTrailingQuotes(s3), "Check of test completed successfully.\n"+
         "Class test has 2 equation(s) and 1 variable(s).\n"+
         "2 of these are trivial equation(s).");
+		assertEquals(killTrailingQuotes("\"\""), "");
+		assertEquals(killTrailingQuotes(""), "");
+		assertEquals(killTrailingQuotes(" "), "");
 	}
 
 	@Test()
