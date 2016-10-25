@@ -49,7 +49,7 @@ public class OMCClientStartOmcTest {
 
   @Test()
   public void testNoCorbaRefFoundSubProcess() throws ConnectException, IOException {
-    OMCClient omc = new OMCClient("/usr/local/bin/omc");
+    OMCClient omc = new OMCClient("omc");
     Files.deleteIfExists(omc.getObjectReferencePath());
     omc.connect();
     omc.disconnect();
@@ -57,7 +57,7 @@ public class OMCClientStartOmcTest {
 
   @Test()
   public void testStartingOMC() throws ConnectException, IOException, InterruptedException {
-    OMCClient omc = new OMCClient("/usr/local/bin/omc");
+    OMCClient omc = new OMCClient("omc");
     omc.connect();
 
     Result result = omc.sendExpression("model t end t;");
