@@ -91,6 +91,20 @@ public abstract class Version implements Comparable<Version> {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Version)) return false;
+
+    Version version = (Version) o;
+    return rawString.equals(version.rawString);
+  }
+
+  @Override
+  public int hashCode() {
+    return rawString.hashCode();
+  }
+
+  @Override
   public String toString() {
     Function<Integer,String> asString = i -> i.toString();
     Function<Integer,String> withDot = i -> "." + i.toString();
