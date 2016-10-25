@@ -1,9 +1,15 @@
+apply plugin: 'antlr'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
 repositories {
   mavenCentral()
   jcenter()
+}
+
+generateGrammarSource {
+    outputDirectory = file(outputDirectory.canonicalPath + "/omc/corba/parser")
+    arguments += ["-package", "omc.corba.parser"]
 }
 
 test {
@@ -13,6 +19,8 @@ test {
 }
 
 dependencies {
+  antlr "org.antlr:antlr4:4.5"
+  compile group: "org.antlr", name: "antlr4-runtime", version: "4.5.3"
   compile group: "org.slf4j", name: "slf4j-api", version: "1.7.21"
   testCompile 'org.testng:testng:6.9.12'
   testCompile group: "ch.qos.logback", name: "logback-classic", version: "1.1.3"

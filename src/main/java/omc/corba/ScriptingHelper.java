@@ -16,20 +16,24 @@
 
 package omc.corba;
 
+import omc.Global;
+import omc.corba.parser.ListLexer;
+import omc.corba.parser.ListParser;
+import omc.corba.parser.ListParser.ListElementContext;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import java.util.Arrays;
-import java.util.Collections;
-
-import omc.Global;
 
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
@@ -105,12 +109,32 @@ public final class ScriptingHelper {
      *  into a List of Strings.
      */
 	public static List<String> fromArray(String modelicaExpr) {
-			Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
-			matcher.find();
-			String extractedArray = matcher.group(1);
-			String[] subs = extractedArray.split(arraySplitRegex);
-			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
-				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
+		List<String> list = new ArrayList<>();
+		try {
+			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
+			return fromArray(p.list().listElement());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//		Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
+//			matcher.find();
+//			String extractedArray = matcher.group(1);
+//			String[] subs = extractedArray.split(arraySplitRegex);
+//			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
+//				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
+		return list;
+	}
+	
+	private static List<String> fromArray(List<ListElementContext> list) {
+		List<String> l = new ArrayList<>();
+		for(ListElementContext lec : list) {
+			if(lec.list() != null) l.addAll(fromArray(lec.list().listElement()));
+			else if(lec.bool() != null) l.add(lec.bool().getText());
+			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
+			else if(lec.STRING() != null) l.add(lec.STRING().getText());
+			else if(lec.WORD() != null) l.add(lec.WORD().getText());
+		}
+		return l;
 	}
 
     /** Returns the `name` of a model inside of `modelicaCode`.
