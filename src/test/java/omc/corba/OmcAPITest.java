@@ -26,17 +26,17 @@ import java.util.Optional;
 
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterClass;
 
 public class OmcAPITest {
   private OMCInterface omc;
-  @BeforeTest
+  @BeforeClass
   public void initClient() throws IOException {
     omc = new OMCClient("omc", "en_US.UTF-8");
     omc.connect();
   }
-  @AfterTest
+  @AfterClass
   public void stopClient() throws IOException {
     omc.disconnect();
   }
