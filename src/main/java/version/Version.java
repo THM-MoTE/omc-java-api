@@ -18,13 +18,17 @@ package version;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/** A version number of a software program/library. */
 public abstract class Version implements Comparable<Version> {
   protected final String rawString;
   protected final Optional<Integer> major;
@@ -94,5 +98,16 @@ public abstract class Version implements Comparable<Version> {
       major.map(asString).orElse("") +
       minor.map(withDot).orElse("") +
       patch.map(withDot).orElse("");
+  }
+
+  static List<Integer> extractNumbers(Matcher matcher) {
+    matcher.find();
+    List<Integer> versions = new ArrayList<>();
+    for(int i=1; i<=matcher.groupCount(); i++) {
+      String str = matcher.group(i);
+      if(str != null)
+        versions.add(Integer.parseInt(str));
+    }
+    return versions;
   }
 }
