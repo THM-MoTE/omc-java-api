@@ -68,7 +68,27 @@ public abstract class Version implements Comparable<Version> {
 
   @Override
   public int compareTo(Version v) {
-    throw new IllegalStateException();
+    Optional<Pair<Integer>> majorPair = this.major.flatMap(n1 -> v.major.map(n2 -> new Pair<Integer>(n1,n2)));
+    Optional<Pair<Integer>> minorPair = this.minor.flatMap(n1 -> v.minor.map(n2 -> new Pair<Integer>(n1,n2)));
+    Optional<Pair<Integer>> patchPair = this.patch.flatMap(n1 -> v.patch.map(n2 -> new Pair<Integer>(n1,n2)));
+
+    return majorPair.flatMap(pair -> {
+      if(pair.v1.equals(pair.v2)) {
+        return minorPair.flatMap(minPair -> {
+
+          if(minPair.v1.equals(minPair.v2)) {
+
+            return patchPair.flatMap(ptPair -> {
+              if(ptPair.v1.equals(ptPair.v2)) {
+                return Optional.of(0);
+              } else return Optional.of(ptPair.v1.compareTo(ptPair.v2));
+            });
+
+          } else return Optional.of(minPair.v1.compareTo(minPair.v2));
+        });
+
+      } else return Optional.of(pair.v1.compareTo(pair.v2));
+    }).orElse(0);
   }
 
   @Override

@@ -69,4 +69,52 @@ public class OMVersionTest {
     assertFalse(v2.isDevVersion);
 
   }
+
+  @Test
+  public void compareToMajor() {
+    String v1 = "OpenModelica 25.3.1";
+    String v2 = "OpenModelica 23.5.1";
+    Version ver = new OMVersion(v1);
+    Version ver2 = new OMVersion(v2);
+    assertEquals(ver.compareTo(ver2), 1);
+  }
+
+  @Test
+  public void compareToMinor() {
+    String v1 = "OpenModelica 23.3.1";
+    String v2 = "OpenModelica 23.5.1";
+    Version ver = new OMVersion(v1);
+    Version ver2 = new OMVersion(v2);
+    assertEquals(ver.compareTo(ver2), -1);
+  }
+
+  @Test
+  public void compareToPatch() {
+    String v1 = "OpenModelica 25.3.4";
+    String v2 = "OpenModelica 25.3.4";
+    Version ver = new OMVersion(v1);
+    Version ver2 = new OMVersion(v2);
+    assertEquals(ver.compareTo(ver2), 0);
+
+    String vs1 = "OpenModelica 25.3.5";
+    String vs2 = "OpenModelica 25.3.4";
+    Version vers = new OMVersion(vs1);
+    Version vers2 = new OMVersion(vs2);
+    assertEquals(vers.compareTo(vers2), 1);
+  }
+
+  @Test
+  public void compareTest() {
+    assertEquals(new OMVersion("OpenModelica 25").compareTo(new OMVersion("OpenModelica 25")), 0);
+    assertEquals(new OMVersion("OpenModelica 34").compareTo(new OMVersion("OpenModelica 25")), 1);
+    assertEquals(new OMVersion("OpenModelica 10").compareTo(new OMVersion("OpenModelica 25")), -1);
+
+    assertEquals(new OMVersion("OpenModelica 10.1").compareTo(new OMVersion("OpenModelica 10.2")), -1);
+    assertEquals(new OMVersion("OpenModelica 10.2").compareTo(new OMVersion("OpenModelica 10.2")), 0);
+    assertEquals(new OMVersion("OpenModelica 10.3").compareTo(new OMVersion("OpenModelica 10.2")), 1);
+
+    assertEquals(new OMVersion("OpenModelica 10.2.4").compareTo(new OMVersion("OpenModelica 10.2.3")), 1);
+    assertEquals(new OMVersion("OpenModelica 10.2.3").compareTo(new OMVersion("OpenModelica 10.2.3")), 0);
+    assertEquals(new OMVersion("OpenModelica 10.2.1").compareTo(new OMVersion("OpenModelica 10.2.3")), -1);
+  }
 }
