@@ -88,14 +88,11 @@ public abstract class Version implements Comparable<Version> {
 
   @Override
   public String toString() {
-    String s = "V ";
-    if(major.isPresent())
-      s += major.get();
-    if(minor.isPresent())
-      s += "." + minor.get();
-    if(patch.isPresent())
-      s+= "."+patch.get();
-
-    return s;
+    Function<Integer,String> asString = i -> i.toString();
+    Function<Integer,String> withDot = i -> "." + i.toString();
+    return "V " +
+      major.map(asString).orElse("") +
+      minor.map(withDot).orElse("") +
+      patch.map(withDot).orElse("");
   }
 }
