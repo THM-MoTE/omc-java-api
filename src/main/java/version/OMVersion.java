@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OMVersion extends Version {
+public class OMVersion extends SemanticVersion {
   private static final Pattern versionPattern =
       Pattern.compile("OpenModelica\\s+(?:(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?(?:~dev)?");
 
@@ -32,14 +32,7 @@ public class OMVersion extends Version {
   @Override
   protected List<Integer> parseVersion(String rawString) {
     Matcher matcher = versionPattern.matcher(rawString);
-    matcher.find();
-    List<Integer> versions = new ArrayList<>();
-    for(int i=1; i<=matcher.groupCount(); i++) {
-      String str = matcher.group(i);
-      if(str != null)
-        versions.add(Integer.parseInt(str));
-    }
-    return versions;
+    return Version.extractNumbers(matcher);
   }
 
   @Override
