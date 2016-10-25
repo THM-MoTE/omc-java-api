@@ -113,6 +113,9 @@ public class ScriptingHelperTest {
 				"\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
 				"true","53","3","113","15","{}","false","false","\"\"","\"\"");
 		assertEquals(fromArray(s4), exp2);
+
+		String s5 = "{{{nico, \"derb\"}}}";
+		assertEquals(fromArray(s5), Arrays.asList("nico", "\"derb\""));
 	}
 
 	@Test()

@@ -16,6 +16,7 @@ test {
       useTestNG()
      //display stdout when running tests
      testLogging.showStandardStreams = true
+     testLogging.exceptionFormat = 'full'
 }
 
 dependencies {

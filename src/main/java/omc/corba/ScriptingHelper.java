@@ -45,7 +45,7 @@ public final class ScriptingHelper {
 	//matches: ["this is a test"] AND [this is a test]
 	private static Pattern quotePattern = Pattern.compile("^\"((?:.|\\n)+)\"$");
 	//matches: [{}] AND [{bla, "blup", hans}]
-	private static Pattern extractArrayPattern = Pattern.compile("^\\{((?:.|\\n)*)\\}$");
+	private static Pattern extractArrayPattern = Pattern.compile("^\\{+((?:.|\\n)*?)\\}+$");
 
 	private static String arraySplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static Pattern pathPattern = Pattern.compile("((?:\\w:)?(((?:\\/|\\\\)[\\w\\-\\.\\s]+)+))");

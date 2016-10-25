@@ -31,7 +31,7 @@ public class OmcAPITest {
   private OMCInterface omc;
   @BeforeTest
   public void initClient() throws IOException {
-    omc = new OMCClient("/usr/local/bin/omc", "en_US.UTF-8");
+    omc = new OMCClient("omc", "en_US.UTF-8");
     omc.connect();
   }
   @AfterTest
