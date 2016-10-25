@@ -31,7 +31,6 @@ public class OMVersion extends Version {
 
   @Override
   protected List<Integer> parseVersion(String rawString) {
-    log.debug("parseVersion({}) {}", rawString, versionPattern);
     Matcher matcher = versionPattern.matcher(rawString);
     matcher.find();
     List<Integer> versions = new ArrayList<>();
@@ -40,7 +39,6 @@ public class OMVersion extends Version {
       if(str != null)
         versions.add(Integer.parseInt(str));
     }
-    log.debug("parsed versions {}", versions);
     return versions;
   }
 
