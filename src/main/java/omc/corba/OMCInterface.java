@@ -39,9 +39,11 @@ import org.slf4j.LoggerFactory;
  * framework. SLF4J has an
  *  <a href="http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html">adapter</a>
  *  to route JUC logging into SLF4J. Note that this adapter has performance issues!
+ *
+ * <br/><br/>
+ * A typical workflow with implementations is:
  * </p>
  * <pre>
- * A typical workflow with implementations is:
  * {@code
  *  OMCInterface client = new OMCClient();
  *  client.connect();
