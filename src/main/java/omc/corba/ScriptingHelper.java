@@ -135,8 +135,8 @@ public final class ScriptingHelper {
 			if(lec.list() != null) l.addAll(fromNestedArray(lec.list().listElement()));
 			else if(lec.bool() != null) l.add(lec.bool().getText());
 			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
-			else if(lec.STRING() != null) l.add(lec.STRING().getText());
-			else if(lec.WORD() != null) l.add(lec.WORD().getText());
+			else if(lec.string() != null) l.add(lec.string().getText());
+			else if(lec.path() != null) l.add(lec.path().getText());
 		}
 		return l;
 	}
@@ -161,8 +161,8 @@ public final class ScriptingHelper {
 			if(lec.list() != null) l.add(fromNestedArrayToNestedList(lec.list().listElement()));
 			else if(lec.bool() != null) l.add(lec.bool().getText());
 			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
-			else if(lec.STRING() != null) l.add(lec.STRING().getText());
-			else if(lec.WORD() != null) l.add(lec.WORD().getText());
+			else if(lec.string() != null) l.add(lec.string().getText());
+			else if(lec.path() != null) l.add(lec.path().getText());
 		}
 		return l;
 	}

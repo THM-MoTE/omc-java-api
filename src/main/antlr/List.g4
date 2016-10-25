@@ -1,23 +1,35 @@
 grammar List;
 
-list : LCBRACE (listElement ( COMMA listElement)* )? RCBRACE;
+list : lbrace (listElement ( COMMA listElement)* )? rbrace;
+
+lbrace  : LBRACE
+        | LCBRACE
+        ;
+
+rbrace  : RBRACE
+        | RCBRACE
+        ;
 
 listElement : list
-            | STRING
             | NUMBER
             | bool
-            | WORD
+            | path
+            | string
             ;
 
+path    : WORD (DOT WORD)+;
 
 bool    : TRUE|FALSE;
 
 TRUE : 'true';
 FALSE : 'false';
 
+LBRACE : '(';
+RBRACE : ')';
 LCBRACE : '{';
 RCBRACE : '}';
 COMMA   : ',';
+DOT : '.';
 
 WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
 
@@ -25,6 +37,12 @@ NUMBER  : '-'?[0-9]+
         | '-'?[0-9]+'.'[0-9]+
         | '-'?[0-9]+'.'[0-9]+'e''-'?[0-9]+;
 
+string  : STRING
+        | S_STRING
+        | WORD
+        ;
+
+S_STRING        : '\'' S_CHAR* '\'';
 STRING          : '\"' S_CHAR* '\"';
 
 fragment S_CHAR : ~["\\]
