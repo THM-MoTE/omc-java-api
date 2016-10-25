@@ -16,6 +16,7 @@
 
 package version;
 
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.List;
@@ -68,27 +69,21 @@ public abstract class Version implements Comparable<Version> {
 
   @Override
   public int compareTo(Version v) {
-    Optional<Pair<Integer>> majorPair = this.major.flatMap(n1 -> v.major.map(n2 -> new Pair<Integer>(n1,n2)));
-    Optional<Pair<Integer>> minorPair = this.minor.flatMap(n1 -> v.minor.map(n2 -> new Pair<Integer>(n1,n2)));
-    Optional<Pair<Integer>> patchPair = this.patch.flatMap(n1 -> v.patch.map(n2 -> new Pair<Integer>(n1,n2)));
+    Function<Integer, Integer> mul100 = i -> i*100;
+    Function<Integer, Integer> mul10 = i -> i*10;
+      //calculate digit of this version
+    Integer thisMji = this.major.map(mul100).orElse(0);
+    Integer thisMii = this.minor.map(mul10).orElse(0);
+    Integer thisPti = this.patch.orElse(0);
+    Integer thisVersion = thisMji + thisMii + thisPti;
 
-    return majorPair.flatMap(pair -> {
-      if(pair.v1.equals(pair.v2)) {
-        return minorPair.flatMap(minPair -> {
+    //calculate digit of that version
+    Integer thatMji = v.major.map(mul100).orElse(0);
+    Integer thatMii = v.minor.map(mul10).orElse(0);
+    Integer thatPti = v.patch.orElse(0);
+    Integer thatVersion = thatMji + thatMii + thatPti;
 
-          if(minPair.v1.equals(minPair.v2)) {
-
-            return patchPair.flatMap(ptPair -> {
-              if(ptPair.v1.equals(ptPair.v2)) {
-                return Optional.of(0);
-              } else return Optional.of(ptPair.v1.compareTo(ptPair.v2));
-            });
-
-          } else return Optional.of(minPair.v1.compareTo(minPair.v2));
-        });
-
-      } else return Optional.of(pair.v1.compareTo(pair.v2));
-    }).orElse(0);
+    return thisVersion.compareTo(thatVersion);
   }
 
   @Override
