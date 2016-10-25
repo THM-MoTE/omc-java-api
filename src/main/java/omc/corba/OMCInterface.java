@@ -16,6 +16,9 @@
 
 package omc.corba;
 
+import version.Version;
+import version.OMVersion;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -166,5 +169,10 @@ public abstract class OMCInterface {
 
   public Result cd(Path path) {
     return call("cd", ScriptingHelper.convertPath(path));
+  }
+
+  public Version getVersion() {
+    Result res = call("getVersion");
+    return new OMVersion(res.result);
   }
 }

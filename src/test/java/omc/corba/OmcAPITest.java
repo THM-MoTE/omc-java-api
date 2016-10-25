@@ -16,6 +16,8 @@
 
 package omc.corba;
 
+import version.Version;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
@@ -76,5 +78,12 @@ public class OmcAPITest {
     Optional<String> info2 = omc.getClassInformation("Modelica.Electrical");
     assertTrue(info2.isPresent());
     assertTrue(info2.get().contains("Library of electrical models (analog, digital, machines, multi-phase)"));
+  }
+
+  @Test
+  public void getVersionTest() {
+    Version v = omc.getVersion();
+    assertTrue(v.toString().contains("V"));
+    assertTrue(v.toString().contains("1."));
   }
 }
