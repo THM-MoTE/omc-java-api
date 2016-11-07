@@ -13,6 +13,7 @@ unmanagedJars in Compile += {
 
 lazy val root = Project(id = "omc-java-api", base = file(".")).
   settings(
+    organization := "de.thm.mote",
     name := "omc-java-api",
     version := "0.1",
     scalaVersion := "2.11.8",
