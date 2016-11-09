@@ -4,9 +4,7 @@ import java.io.FileNotFoundException
 //com.sun.corba.se -package
 unmanagedJars in Compile += {
   val jhome = Resources.getJavaHome
-  val rscJar = jhome / "lib" / "resources.jar"
-  if(rscJar.exists()) rscJar
-  else throw new FileNotFoundException(s"Can't find needed resource: $rscJar")
+  Resources.checkExists(jhome / "lib" / "resources.jar")
 }
 
 lazy val root = Project(id = "omc-java-api", base = file(".")).

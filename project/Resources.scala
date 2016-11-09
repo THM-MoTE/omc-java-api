@@ -1,5 +1,6 @@
 import sbt._
 import java.io.FileNotFoundException
+import java.io.File
 
 object Resources {
 
@@ -17,5 +18,10 @@ object Resources {
 				throw new FileNotFoundException("$JAVA_HOME is undefined as well as the system property `java.home`." +
 																			"Setup a environment variable JAVA_HOME")
 		}
+	}
+
+	def checkExists(file:File): File = {
+		if(file.exists()) file
+		else throw new FileNotFoundException(s"Can't find needed resource: $file")
 	}
 }
