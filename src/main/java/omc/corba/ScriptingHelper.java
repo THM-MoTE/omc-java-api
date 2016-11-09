@@ -16,20 +16,21 @@
 
 package omc.corba;
 
+import omc.Global;
+import omc.corba.parser.ListLexer;
+import omc.corba.parser.ListParser;
+import omc.corba.parser.ListParser.ListElementContext;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import java.util.Arrays;
-import java.util.Collections;
-
-import omc.Global;
 
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
@@ -100,19 +101,71 @@ public final class ScriptingHelper {
 			return s.trim();
 		}
 	}
-
-    /** Turns the given modelica expression - which should be an array -
-     *  into a List of Strings.
-     */
+	
+	
+	/** Turns the given modelica expression - which should be an array -
+	 *  into a List of Strings.
+	 */
 	public static List<String> fromArray(String modelicaExpr) {
-			Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
+		Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
 			matcher.find();
 			String extractedArray = matcher.group(1);
 			String[] subs = extractedArray.split(arraySplitRegex);
 			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
 				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
 	}
-
+	
+	/** Turns the given modelica expression - which should be an array -
+     *  into a flat List of Strings.
+     */
+	public static List<String> fromNestedArray(String modelicaExpr) {
+		List<String> list = new ArrayList<>();
+		try {
+			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
+			return fromNestedArray(p.list().listElement());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	private static List<String> fromNestedArray(List<ListElementContext> list) {
+		List<String> l = new ArrayList<>();
+		for(ListElementContext lec : list) {
+			if(lec.list() != null) l.addAll(fromNestedArray(lec.list().listElement()));
+			else if(lec.bool() != null) l.add(lec.bool().getText());
+			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
+			else if(lec.string() != null) l.add(lec.string().getText());
+			else if(lec.path() != null) l.add(lec.path().getText());
+		}
+		return l;
+	}
+	
+	/** Turns the given modelica expression - which should be an array -
+	 *  into a flat List of Strings.
+	 */
+	public static List<Object> fromNestedArrayToNestedList(String modelicaExpr) {
+		List<Object> list = new ArrayList<>();
+		try {
+			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
+			return fromNestedArrayToNestedList(p.list().listElement());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	private static List<Object> fromNestedArrayToNestedList(List<ListElementContext> list) {
+		List<Object> l = new ArrayList<>();
+		for(ListElementContext lec : list) {
+			if(lec.list() != null) l.add(fromNestedArrayToNestedList(lec.list().listElement()));
+			else if(lec.bool() != null) l.add(lec.bool().getText());
+			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
+			else if(lec.string() != null) l.add(lec.string().getText());
+			else if(lec.path() != null) l.add(lec.path().getText());
+		}
+		return l;
+	}
     /** Returns the `name` of a model inside of `modelicaCode`.
      * <P>Note: If there are more than one models the result is the
      * first model. </P>

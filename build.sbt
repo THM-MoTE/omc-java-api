@@ -7,6 +7,13 @@ unmanagedJars in Compile += {
   Resources.checkExists(jhome / "lib" / "resources.jar")
 }
 
+//configure antlr4
+antlr4Settings
+  //resulting package name
+antlr4PackageName in Antlr4 := Some("omc.corba.parser")
+  //src directory of .g4 files
+(sourceDirectory in Antlr4) := file("src/main/antlr")
+
 lazy val root = Project(id = "omc-java-api", base = file(".")).
   settings(
     organization := "de.thm.mote",
