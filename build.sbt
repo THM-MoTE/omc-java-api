@@ -11,6 +11,13 @@ unmanagedJars in Compile += {
   else throw new FileNotFoundException(s"Can't find needed resource: $rscJar")
  }
 
+//configure antlr4
+antlr4Settings
+  //resulting package name
+antlr4PackageName in Antlr4 := Some("omc.corba.parser")
+  //src directory of .g4 files
+(sourceDirectory in Antlr4) := file("src/main/antlr")
+
 lazy val root = Project(id = "omc-java-api", base = file(".")).
   settings(
     name := "omc-java-api",
