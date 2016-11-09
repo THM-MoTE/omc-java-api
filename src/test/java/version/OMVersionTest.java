@@ -117,4 +117,11 @@ public class OMVersionTest {
     assertEquals(new OMVersion("OpenModelica 10.2.3").compareTo(new OMVersion("OpenModelica 10.2.3")), 0);
     assertEquals(new OMVersion("OpenModelica 10.2.1").compareTo(new OMVersion("OpenModelica 10.2.3")), -1);
   }
+
+  @Test
+  public void isDevTest() {
+    assertTrue(new OMVersion("OpenModelica 10.2.4   dev").isDevVersion);
+    assertTrue(new OMVersion("OpenModelica 10.2.4~dev").isDevVersion);
+    assertFalse(new OMVersion("OpenModelica 10.2.4").isDevVersion);
+  }
 }
