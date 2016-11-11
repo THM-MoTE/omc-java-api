@@ -28,4 +28,4 @@ dependencies {
 }
 
 group = "de.thm.mote"
-version = "0.1"
+version = "0.2"
