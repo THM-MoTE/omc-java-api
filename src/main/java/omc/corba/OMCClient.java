@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -219,12 +221,16 @@ public class OMCClient extends OMCInterface {
   
   /** Starts a new omc-instance as subprocess */
   private Process startOMC() {
-    String arg = "+d=interactiveCorba" +
-                 iorProvider.getSuffix().map(suffix -> "--corbaSessionName="+suffix).orElse("");
+    List<String> cmd = new ArrayList<>();
+    cmd.add(omcExecutable.get());
+    cmd.add("+d=interactiveCorba");
+    //add sessionname to command if it exists
+    iorProvider.getSuffix().ifPresent(s -> cmd.add("--corbaSessionName="+s));
+
     if(!omcExecutable.isPresent())
       throw new IllegalStateException("unknown omc executable!");
 
-    ProcessBuilder pb = new ProcessBuilder(omcExecutable.get(), arg);
+    ProcessBuilder pb = new ProcessBuilder(cmd);
     //set environment
     Map<String,String> env = pb.environment();
     env.put(localeEnvVariable, omcLocale);
@@ -248,10 +254,10 @@ public class OMCClient extends OMCInterface {
     try {
       Process process = pb.start();
       log.info("started {} {} - locale {} - output redirecting to: {}",
-        omcExecutable.get(), arg, omcLocale, logFile);
+        omcExecutable.get(),cmd, omcLocale, logFile);
       return process;
     } catch (IOException e) {
-      log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), arg, omcWorkingDir,  e);
+      log.error("Couldn't start {} {} as subprocess in {}", omcExecutable.get(), cmd, omcWorkingDir,  e);
       throw new IllegalStateException("couldn't start omc!");
     }
   }

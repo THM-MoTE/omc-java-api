@@ -16,15 +16,14 @@
 
 package omc.corba;
 
-import static org.testng.Assert.*;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.file.Files;
 
-import omc.Global;
+import org.testng.annotations.Test;
 
 public class OMCClientStartOmcTest {
 
@@ -63,6 +62,15 @@ public class OMCClientStartOmcTest {
     Result result = omc.sendExpression("model t end t;");
     assertEquals(result.result, "{t}");
 
+    omc.disconnect();
+  }
+
+  @Test()
+  public void testCustomIor() throws ConnectException, IOException, InterruptedException {
+    IORNameProvider provider = new CustomIORNameProvider("ior-test", true);
+    OMCClient omc = new OMCClient("omc", OMCInterface.fallbackLocale, provider);
+    omc.connect();
+    assertEquals(Files.exists(provider.getPath()),true);
     omc.disconnect();
   }
 }
