@@ -21,16 +21,14 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
+
+import org.omg.CORBA.ORB;
 
 import omc.Global;
 import omc.corba.idl.OmcCommunication;
 import omc.corba.idl.OmcCommunicationHelper;
-
-import org.omg.CORBA.ORB;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Implementation of OMCInterface.
  *
@@ -57,17 +55,20 @@ public class OMCClient extends OMCInterface {
   private final Optional<String> omcExecutable;
   private Optional<Process> omcProcess = Optional.empty();
   private final String omcLocale;
+  private final IORNameProvider iorProvider;
 
   public OMCClient() {
     super();
     omcExecutable = Optional.empty();
     omcLocale = findLocale();
+    iorProvider = new StdIORNameProvider();
   }
 
   public OMCClient(String omcExec) {
     super();
     omcExecutable = Optional.of(omcExec);
     omcLocale = findLocale();
+    iorProvider = new StdIORNameProvider();
   }
   
   public OMCClient(Path omcExec) {
@@ -82,7 +83,15 @@ public class OMCClient extends OMCInterface {
     super();
     omcExecutable = Optional.of(omcExec);
     omcLocale = locale;
+    iorProvider = new StdIORNameProvider();
   }
+  
+	public OMCClient(String omcExec, String locale, IORNameProvider iorProvider) {
+		super();
+		omcExecutable = Optional.of(omcExec);
+		omcLocale = locale;
+		this.iorProvider = iorProvider;
+	}
 
   private String findLocale() {
     String systemLang = System.getenv("LANG");
@@ -162,7 +171,7 @@ public class OMCClient extends OMCInterface {
   }
 
   private OmcCommunication createOmcConnection() throws IOException, FileNotFoundException {
-    Path refPath = getObjectReferencePath();
+    Path refPath = iorProvider.getPath();
     if(Files.exists(refPath)) {
       String stringifiedRef = readObjectReference(refPath);
       return convertToObject(stringifiedRef);
@@ -201,23 +210,17 @@ public class OMCClient extends OMCInterface {
     log.debug("Read CORBA-Reference from {}", pathToObjRef);
     return head;
   }
-
+  
   /** Returns a path to the omc CORBA object. */
+  @Deprecated
   Path getObjectReferencePath() {
-    Path resultingPath;
-    if (Global.isLinuxOS() || Global.isMacOS()) {
-      // objRef in <tmp>/openmodelica.<username>.objid
-      resultingPath = Global.tmpDir.resolve("openmodelica." + Global.username + ".objid");
-    } else {
-      // objRef in <tmp>/openmodelica.objid
-      resultingPath = Global.tmpDir.resolve("openmodelica.objid");
-    }
-    return resultingPath;
+    return iorProvider.getPath();
   }
-
+  
   /** Starts a new omc-instance as subprocess */
   private Process startOMC() {
-    String arg = "+d=interactiveCorba";
+    String arg = "+d=interactiveCorba" +
+                 iorProvider.getSuffix().map(suffix -> "--corbaSessionName="+suffix).orElse("");
     if(!omcExecutable.isPresent())
       throw new IllegalStateException("unknown omc executable!");
 
