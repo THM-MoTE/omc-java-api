@@ -5,21 +5,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/** Provider for custom/self-defined IOR name (the suffix).
+ * If unique=true the IOR file will be made unique by appending a number to the given suffix.
+ */
 public class CustomIORNameProvider implements IORNameProvider {
   private final String suffix;
   private final boolean unique;
   private final IORNameProvider stdProvider = new StdIORNameProvider();
   private final Path iorPath;
-  private final Logger log = LoggerFactory.getLogger(CustomIORNameProvider.class);
   
   public CustomIORNameProvider(String suffix, boolean unique) {
     this.unique = unique;
     this.suffix = createUniqueName(stdProvider.getPath(), "."+suffix);
     this.iorPath = Paths.get(stdProvider.getPath().toString() + this.suffix);
-    log.debug("created suffix: {} path: {}", this.suffix, this.iorPath);
   }
 
   private String createUniqueName(Path startPath, String suffix) {
@@ -31,7 +29,6 @@ public class CustomIORNameProvider implements IORNameProvider {
         uniqueSuffix = suffix + "-" + cnt;
         cnt++;
       }
-      log.debug("created unique suffix: {}", uniqueSuffix);
       return uniqueSuffix;
     } else
       return suffix;
