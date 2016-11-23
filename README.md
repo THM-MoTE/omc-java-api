@@ -43,6 +43,6 @@ For more information see the LICENSE and the
   [API](https://build.openmodelica.org/Documentation/OpenModelica.Scripting.html)
 - If an ```omc```-instance gets started as subprocess
   ```stdin``` and ```stdout``` are redirected into
-  ```$TMP/omc_home/omc.log```.
+  `$TMP/omc_home/omc.log`.
 
 - Running 1 test in gradle: `gradle test --tests <TESTNAME>`
