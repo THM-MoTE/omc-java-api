@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class ExternalLibrariesTest {
+public class LibraryLoaderTest {
 
     private Path projectRoot;
     private Path projectFile;
@@ -60,33 +60,33 @@ public class ExternalLibrariesTest {
 
     @Test
     public void testValidConstructor() {
-        ExternalLibraries libs = new ExternalLibraries(projectFile);
-        ExternalLibraries libs2 = new ExternalLibraries(projectRoot);
+        LibraryLoader libs = new LibraryLoader(projectFile);
+        LibraryLoader libs2 = new LibraryLoader(projectRoot);
         assertNotNull(libs);
         assertNotNull(libs2);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testInvalidConstructor() {
-        ExternalLibraries libs = new ExternalLibraries(projectRoot.resolve("test"));
+        LibraryLoader libs = new LibraryLoader(projectRoot.resolve("test"));
     }
 
     @Test
     public void testRelativeImports() throws IOException {
-        ExternalLibraries libs = new ExternalLibraries(projectRoot);
+        LibraryLoader libs = new LibraryLoader(projectRoot);
         List<Path> libraries = libs.relativeImports(projectFile);
         assertEquals(libraries, libPaths);
     }
 
     @Test
     public void testLoadLibrary() throws IOException {
-        ExternalLibraries libs = new ExternalLibraries(projectRoot);
+        LibraryLoader libs = new LibraryLoader(projectRoot);
         assertEquals(libs.loadLibrary(omc, Paths.get("/Users/nico/2014-modelica-kotani/SHM")), true);
     }
 
     @Test(expectedExceptions = FileNotFoundException.class)
     public void testLoadLibraryFail() throws IOException {
-        ExternalLibraries libs = new ExternalLibraries(projectRoot);
+        LibraryLoader libs = new LibraryLoader(projectRoot);
         assertEquals(libs.loadLibrary(omc, projectRoot), true);
     }
 }

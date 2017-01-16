@@ -30,13 +30,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExternalLibraries {
-    private final Logger log = LoggerFactory.getLogger(ExternalLibraries.class);
+public class LibraryLoader {
+    private final Logger log = LoggerFactory.getLogger(LibraryLoader.class);
     private final String importFileName = "package.imports";
     private final String packageFileName = "package.mo";
     private final Path importFile;
 
-    public ExternalLibraries(Path projectFile) {
+    public LibraryLoader(Path projectFile) {
         if(Files.isDirectory(projectFile)) {
             importFile = projectFile.resolve(importFileName);
         } else if(!projectFile.endsWith(importFileName)) {
