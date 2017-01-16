@@ -16,24 +16,32 @@
 
 package omc;
 
-import static org.testng.Assert.*;
-
+import omc.corba.OMCClient;
+import omc.corba.OMCInterface;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ExternalLibrariesTest {
 
     private Path projectRoot;
     private Path projectFile;
-    private List<String> fileContent = Arrays.asList("../lib1", "../../lib2", "/lib/SHM", "/var/lib/SH");
+    private final List<String> fileContent = Arrays.asList("../lib1", "../../lib2", "/lib/SHM", "/var/lib/SH");
     private List<Path> libPaths;
+
+    private final OMCInterface omc = new OMCClient("omc", "en_US.UTF-8");
 
     @BeforeClass
     public void init() throws IOException {
@@ -41,11 +49,13 @@ public class ExternalLibrariesTest {
         projectFile = projectRoot.resolve("package.imports");
         libPaths = fileContent.stream().map(projectRoot::resolve).collect(Collectors.toList());
         Files.write(projectFile, fileContent, Global.encoding);
+
+        omc.connect();
     }
 
     @AfterClass
-    public void release() {
-
+    public void release() throws IOException {
+        omc.disconnect();
     }
 
     @Test
@@ -66,5 +76,17 @@ public class ExternalLibrariesTest {
         ExternalLibraries libs = new ExternalLibraries(projectRoot);
         List<Path> libraries = libs.relativeImports(projectFile);
         assertEquals(libraries, libPaths);
+    }
+
+    @Test
+    public void testLoadLibrary() throws IOException {
+        ExternalLibraries libs = new ExternalLibraries(projectRoot);
+        assertEquals(libs.loadLibrary(omc, Paths.get("/Users/nico/2014-modelica-kotani/SHM")), true);
+    }
+
+    @Test(expectedExceptions = FileNotFoundException.class)
+    public void testLoadLibraryFail() throws IOException {
+        ExternalLibraries libs = new ExternalLibraries(projectRoot);
+        assertEquals(libs.loadLibrary(omc, projectRoot), true);
     }
 }

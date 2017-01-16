@@ -16,9 +16,13 @@
 
 package omc;
 
+import omc.corba.OMCInterface;
+import omc.corba.Result;
+import omc.corba.ScriptingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.channels.IllegalBlockingModeException;
 import java.nio.file.Files;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 public class ExternalLibraries {
     private final Logger log = LoggerFactory.getLogger(ExternalLibraries.class);
     private final String importFileName = "package.imports";
+    private final String packageFileName = "package.mo";
     private final Path importFile;
 
     public ExternalLibraries(Path projectFile) {
@@ -47,5 +52,26 @@ public class ExternalLibraries {
         return Files.lines(file).map(parent::resolve).collect(Collectors.toList());
     }
 
-    load
+    public boolean loadLibraries(OMCInterface omc) throws IOException, FileNotFoundException {
+        List<Path> libraries = relativeImports(importFile);
+        log.debug("Loading {}", libraries);
+        return libraries.stream().map(lib -> {
+            try {
+                return loadLibrary(omc, lib);
+            } catch (FileNotFoundException e) {
+                return false;
+            }
+        }).allMatch(b -> b);
+    }
+
+    boolean loadLibrary(OMCInterface omc, Path libraryDirectory) throws FileNotFoundException {
+        Path packageFile = libraryDirectory.resolve(packageFileName);
+        if(Files.notExists(packageFile)) {
+            throw new FileNotFoundException("The library " + libraryDirectory + " does not have a " + packageFileName);
+        } else {
+            Result res = omc.call("loadFile", ScriptingHelper.convertPath(packageFile));
+            log.debug("Loading {} returned {}", libraryDirectory, res);
+            return res.result.equals("true");
+        }
+    }
 }
