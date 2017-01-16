@@ -39,6 +39,8 @@ public class LibraryLoader {
     public LibraryLoader(Path projectFile) {
         if(Files.isDirectory(projectFile)) {
             importFile = projectFile.resolve(importFileName);
+            if(Files.notExists(importFile))
+                throw new IllegalArgumentException("The given project directory does not contain a "+importFileName);
         } else if(!projectFile.endsWith(importFileName)) {
             throw new IllegalArgumentException("The given projectFile has to end with: "+importFileName);
         } else {
