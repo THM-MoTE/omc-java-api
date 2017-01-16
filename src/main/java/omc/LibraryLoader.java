@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 public class LibraryLoader {
     private final Logger log = LoggerFactory.getLogger(LibraryLoader.class);
-    private final String importFileName = "package.imports";
-    private final String packageFileName = "package.mo";
+    public static final String importFileName = "package.imports";
+    private static final String packageFileName = "package.mo";
     private final Path importFile;
 
     public LibraryLoader(Path projectFile) {
