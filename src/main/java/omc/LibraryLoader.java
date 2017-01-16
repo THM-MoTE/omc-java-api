@@ -54,16 +54,19 @@ public class LibraryLoader {
         return Files.lines(file).map(parent::resolve).collect(Collectors.toList());
     }
 
-    public boolean loadLibraries(OMCInterface omc) throws IOException, FileNotFoundException {
+    public void loadLibraries(OMCInterface omc) throws IOException, LoadLibraryException {
         List<Path> libraries = relativeImports(importFile);
         log.debug("Loading {}", libraries);
-        return libraries.stream().map(lib -> {
+        List<String> errors = libraries.stream().map(lib -> {
             try {
-                return loadLibrary(omc, lib);
+                return loadLibrary(omc, lib) ? "" : "Couldn't load library "+lib;
             } catch (FileNotFoundException e) {
-                return false;
+                return e.getMessage();
             }
-        }).allMatch(b -> b);
+        }).filter(s -> !s.isEmpty()).collect(Collectors.toList());
+
+        if(!errors.isEmpty())
+            throw new LoadLibraryException("Couldn't load all libraries", errors);
     }
 
     boolean loadLibrary(OMCInterface omc, Path libraryDirectory) throws FileNotFoundException {
