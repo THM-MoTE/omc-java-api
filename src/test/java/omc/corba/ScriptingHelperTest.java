@@ -16,17 +16,20 @@
 
 package omc.corba;
 
+import org.testng.annotations.Test;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-
-
-import static org.testng.Assert.*;
-import org.testng.annotations.Test;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static omc.corba.ScriptingHelper.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class ScriptingHelperTest {
 
@@ -111,7 +114,7 @@ public class ScriptingHelperTest {
 				"\"Ideal linear electrical resistor\"",
 				"false","false","false",
 				"\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
-				"true","53","3","113","15","{}","false","false","\"\"","\"\"");
+				"true","53","3","113","15", "{}","false","false","\"\"","\"\"");
 		assertEquals(fromArray(s4), exp2);
 
 		String s5 = "{{{nico, \"derb\"}}}";

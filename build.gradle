@@ -1,9 +1,27 @@
+apply plugin: 'antlr'
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
+
+
+group = "de.thm.mni.mote"
+version = "0.1"
+
 
 repositories {
   mavenCentral()
   jcenter()
+}
+
+javadoc {
+  failOnError = false
+}
+
+generateGrammarSource {
+    outputDirectory = file(outputDirectory.canonicalPath + "/omc/corba/parser")
+    arguments += ["-package", "omc.corba.parser"]
 }
 
 test {
@@ -14,10 +32,92 @@ test {
 }
 
 dependencies {
+  antlr "org.antlr:antlr4:4.5"
+  compile group: "org.antlr", name: "antlr4-runtime", version: "4.5.3"
   compile group: "org.slf4j", name: "slf4j-api", version: "1.7.21"
   testCompile 'org.testng:testng:6.9.12'
   testCompile group: "ch.qos.logback", name: "logback-classic", version: "1.1.3"
 }
 
-group = "de.thm.mote"
-version = "0.1"
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        //Needed only for SNAPSHOT versions
+        //maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'omc-java-api'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'A library to communicate with the OpenModelica Compiler.'
+                url 'https://github.com/THM-MoTE/omc-java-api/'
+
+                scm {
+                    connection 'scm:git:https://github.com/THM-MoTE/omc-java-api/'
+                    developerConnection 'scm:git:https://github.com/THM-MoTE/omc-java-api/'
+                    url 'https://github.com/THM-MoTE/omc-java-api/'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU General Public License, Version 3.0'
+                        url 'https://github.com/THM-MoTE/omc-java-api/blob/master/LICENSE'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name 'Nicola Justus'
+                        email 'nicola.justus@mni.thm.de'
+                    }
+                    developer {
+                        name 'Marcel Hoppe'
+                        email 'marcel.hoppe@mni.thm.de'
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    username = ossrhUsername
+    password = ossrhPassword
+}

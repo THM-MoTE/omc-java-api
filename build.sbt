@@ -3,13 +3,16 @@ import java.io.FileNotFoundException
 //include resources-jar (from java's home directory) in classpath for using
 //com.sun.corba.se -package
 unmanagedJars in Compile += {
-  val javaHome = System.getenv("JAVA_HOME")
-  if(javaHome == null)
-    throw new FileNotFoundException("$JAVA_HOME is undefined. Setup a environment variable JAVA_HOME")
-  val rscJar = file(javaHome) / "jre" / "lib" / "resources.jar"
-  if(rscJar.exists()) rscJar
-  else throw new FileNotFoundException(s"Can't find needed resource: $rscJar")
- }
+  val jhome = Resources.getJavaHome
+  Resources.checkExists(jhome / "lib" / "resources.jar")
+}
+
+//configure antlr4
+antlr4Settings
+  //resulting package name
+antlr4PackageName in Antlr4 := Some("omc.corba.parser")
+  //src directory of .g4 files
+(sourceDirectory in Antlr4) := file("src/main/antlr")
 
 lazy val root = Project(id = "omc-java-api", base = file(".")).
   settings(

@@ -1,3 +1,8 @@
+Used sbt-plugins:
+    == sbt-antlr4 ==
+    Homepage: https://github.com/ihji/sbt-antlr4
+    License: Apache License v2 (http://www.apache.org/licenses/LICENSE-2.0)
+
 Used libraries:
     == Simple Logging Facade for Java (SLF4J) ==
     Homepage: http://www.slf4j.org
@@ -11,3 +16,6 @@ Used libraries:
     Homepage: http://logback.qos.ch/
     License: LGPL 2.1 (http://logback.qos.ch/license.html)
 
+    == ANTLR4 ==
+    Homepage: http://www.antlr.org/
+    License: BSD License (http://www.antlr.org/license.html)
