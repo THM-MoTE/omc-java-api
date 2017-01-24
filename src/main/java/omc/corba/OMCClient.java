@@ -72,7 +72,7 @@ public class OMCClient extends OMCInterface {
     omcLocale = findLocale();
     iorProvider = new StdIORNameProvider();
   }
-  
+
   public OMCClient(Path omcExec) {
     this(omcExec.toString());
   }
@@ -87,7 +87,14 @@ public class OMCClient extends OMCInterface {
     omcLocale = locale;
     iorProvider = new StdIORNameProvider();
   }
-  
+
+  public OMCClient(String omcExec, IORNameProvider iorProvider) {
+    super();
+    omcExecutable = Optional.of(omcExec);
+    omcLocale = findLocale();
+    this.iorProvider = iorProvider;
+  }
+
 	public OMCClient(String omcExec, String locale, IORNameProvider iorProvider) {
 		super();
 		omcExecutable = Optional.of(omcExec);
@@ -212,13 +219,13 @@ public class OMCClient extends OMCInterface {
     log.debug("Read CORBA-Reference from {}", pathToObjRef);
     return head;
   }
-  
+
   /** Returns a path to the omc CORBA object. */
   @Deprecated
   Path getObjectReferencePath() {
     return iorProvider.getPath();
   }
-  
+
   /** Starts a new omc-instance as subprocess */
   private Process startOMC() {
     List<String> cmd = new ArrayList<>();
