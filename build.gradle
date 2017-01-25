@@ -6,7 +6,7 @@ apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 
 
-group = "de.thm.mote"
+group = "de.thm.mni.mote"
 version = "0.1"
 
 

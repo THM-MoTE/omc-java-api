@@ -32,8 +32,7 @@ This library uses the [slf4j](http://www.slf4j.org/) api for logging.
 Provide a proper logging-framework for controlling logging output, for example [logback](http://logback.qos.ch/).
 
 # License
-Because of OpenModelica's restrictions this library is distributed under
-the terms of the **GNU General Public License Version 3.0**.
+This library is distributed under the terms of the **GNU General Public License Version 3.0**.
 For more information see the LICENSE and the
 [OpenModelica License](https://github.com/OpenModelica/OMCompiler/blob/master/COPYING).
 
@@ -44,5 +43,6 @@ For more information see the LICENSE and the
   [API](https://build.openmodelica.org/Documentation/OpenModelica.Scripting.html)
 - If an ```omc```-instance gets started as subprocess
   ```stdin``` and ```stdout``` are redirected into
-  ```$TMP/omc_home/omc.log```.
+  `$TMP/omc_home/omc.log`.
+
 - Running 1 test in gradle: `gradle test --tests <TESTNAME>`
