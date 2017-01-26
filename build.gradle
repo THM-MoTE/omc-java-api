@@ -7,7 +7,7 @@ apply plugin: 'io.codearte.nexus-staging'
 
 
 group = "de.thm.mni.mote"
-version = "0.3-dev"
+version = "0.3.1-dev"
 
 
 repositories {
@@ -69,6 +69,13 @@ buildscript {
     }
 }
 
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = rootProject.name
+        pom.packaging = 'jar'
+    }
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -83,7 +90,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'omc-java-api'
+                name rootProject.name
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'A library to communicate with the OpenModelica Compiler.'

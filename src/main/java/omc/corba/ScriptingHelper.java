@@ -122,7 +122,9 @@ public final class ScriptingHelper {
 		List<String> list = new ArrayList<>();
 		try {
 			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
-			return fromNestedArray(p.list().listElement());
+			ListParser.ListContext listContext = p.list();
+			if (listContext != null) return fromNestedArray(listContext.listElement());
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,7 +136,7 @@ public final class ScriptingHelper {
 		for(ListElementContext lec : list) {
 			if(lec.list() != null) l.addAll(fromNestedArray(lec.list().listElement()));
 			else if(lec.bool() != null) l.add(lec.bool().getText());
-			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
+			else if (lec.number() != null) l.add(lec.number().getText());
 			else if(lec.string() != null) l.add(lec.string().getText());
 			else if(lec.path() != null) l.add(lec.path().getText());
 		}
@@ -148,19 +150,20 @@ public final class ScriptingHelper {
 		List<Object> list = new ArrayList<>();
 		try {
 			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
-			return fromNestedArrayToNestedList(p.list().listElement());
+			ListParser.ListContext listContext = p.list();
+			if (listContext != null) return fromNestedArrayToNestedList(listContext.listElement());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
+
 	private static List<Object> fromNestedArrayToNestedList(List<ListElementContext> list) {
 		List<Object> l = new ArrayList<>();
 		for(ListElementContext lec : list) {
 			if(lec.list() != null) l.add(fromNestedArrayToNestedList(lec.list().listElement()));
 			else if(lec.bool() != null) l.add(lec.bool().getText());
-			else if(lec.NUMBER() != null) l.add(lec.NUMBER().getText());
+			else if (lec.number() != null) l.add(lec.number().getText());
 			else if(lec.string() != null) l.add(lec.string().getText());
 			else if(lec.path() != null) l.add(lec.path().getText());
 		}

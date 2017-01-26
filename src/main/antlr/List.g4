@@ -1,25 +1,25 @@
 grammar List;
 
-list : lbrace (listElement ( COMMA listElement)* )? rbrace;
-
-lbrace  : LBRACE
-        | LCBRACE
-        ;
-
-rbrace  : RBRACE
-        | RCBRACE
-        ;
+list : LBRACE (listElement ( COMMA listElement)* )? RBRACE
+     | LCBRACE (listElement ( COMMA listElement)* )? RCBRACE
+     ;
 
 listElement : list
-            | NUMBER
+            | number
             | bool
             | path
             | string
             ;
 
-path    : WORD (DOT WORD)+;
+path    : WORD (DOT WORD)*;
+
+number  : NUMBER;
 
 bool    : TRUE|FALSE;
+
+string  : DQ_STRING
+        | SQ_STRING
+        ;
 
 TRUE : 'true';
 FALSE : 'false';
@@ -31,21 +31,22 @@ RCBRACE : '}';
 COMMA   : ',';
 DOT : '.';
 
-WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
+WORD : [A-Za-z_][0-9A-Za-z_]*;
 
 NUMBER  : '-'?[0-9]+
         | '-'?[0-9]+'.'[0-9]+
         | '-'?[0-9]+'.'[0-9]+'e''-'?[0-9]+;
 
-string  : STRING
-        | S_STRING
-        | WORD
-        ;
+DQ_STRING          : '\"' DQ_CHAR* '\"';
+SQ_STRING        : '\'' SQ_CHAR* '\'';
 
-S_STRING        : '\'' S_CHAR* '\'';
-STRING          : '\"' S_CHAR* '\"';
+WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
 
-fragment S_CHAR : ~["\\]
+fragment DQ_CHAR : ~["\\]
+                | ESCAPESEQUENCE
+                ;
+
+fragment SQ_CHAR : ~['\\]
                 | ESCAPESEQUENCE
                 ;
 
@@ -64,5 +65,3 @@ fragment UNICODEESCAPE  :   '\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
 fragment ZEROTOTHREE    : [0-3];
 fragment OCTALDIGIT     : [0-7];
 fragment HEXDIGIT       : [0-9a-fA-F];
-
-WORD : [A-Za-z0-9]+;

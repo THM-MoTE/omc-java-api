@@ -120,6 +120,35 @@ public class ScriptingHelperTest {
 		String s5 = "{{{nico, \"derb\"}}}";
 		assertEquals(fromArray(s5), Arrays.asList("nico", "\"derb\""));
 	}
+  
+  @Test()
+  public void fromNestedArrayTest() {
+    String s = "(nico, model, jenny, derb)";
+    String s2 = "{nico, model, jenny, derb}";
+    List<String> exp = Arrays.asList("nico", "model", "jenny", "derb");
+    System.out.println(s);
+    assertEquals(fromNestedArray(s), exp);
+    System.out.println(s2);
+    assertEquals(fromNestedArray(s2), exp);
+    
+    String s3 = "{}";
+    System.out.println(s3);
+    assertEquals(fromNestedArray(s3), Collections.emptyList());
+    
+    String s4 = "{\"model\",\"Ideal linear electrical resistor\",false,false,false,\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\",true,53,3,113,15,{},false,false,\"\",\"\"}";
+    List<Object> exp2 = Arrays.asList(
+        "\"model\"",
+        "\"Ideal linear electrical resistor\"",
+        "false", "false", "false",
+        "\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
+        "true", "53", "3", "113", "15", Collections.EMPTY_LIST, "false", "false", "\"\"", "\"\"");
+    System.out.println(s4);
+    assertEquals(fromNestedArrayToNestedList(s4), exp2);
+    
+    String s5 = "{{{nico, \"derb\"}}}";
+    System.out.println(s5);
+    assertEquals(fromNestedArray(s5), Arrays.asList("nico", "\"derb\""));
+  }
 
 	@Test()
 	public void getModelNameTest() {
