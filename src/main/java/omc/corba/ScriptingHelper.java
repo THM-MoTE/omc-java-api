@@ -164,7 +164,7 @@ public final class ScriptingHelper {
 			if(lec.list() != null) l.add(fromNestedArrayToNestedList(lec.list().listElement()));
 			else if(lec.bool() != null) l.add(lec.bool().getText());
 			else if (lec.number() != null) l.add(lec.number().getText());
-			else if(lec.string() != null) l.add(lec.string().getText());
+			else if (lec.string() != null) l.add(lec.string().getText().replaceAll("^\\\"|\\\"$", ""));
 			else if(lec.path() != null) l.add(lec.path().getText());
 		}
 		return l;
