@@ -1,0 +1,100 @@
+[[omc-corba-interface-for-java]]
+= OMC CORBA-interface for Java
+----------------------------
+
+A simple java implementation of
+https://openmodelica.org/[OpenModelica]'s CORBA interface. Java-clients
+should use this library to communicate with `omc`.
+
+[[common-workflow]]
+Common workflow
+---------------
+
+A common workflow example:
+
+[source,java]
+----
+OMCInterface omci = new OMCClient();
+//1. connect to server; now omci is usable
+omci.connect();
+
+//2. start communication
+Result res = omc.sendExpression("model abc Real x=1; end abc;");
+System.out.println(res);
+
+//3. disconnect from server;
+//omci isn't usable until a call to connect()
+omci.disconnect();
+----
+
+[[helpers-converters]]
+Helpers, Converters
+-------------------
+
+We provide converters which makes the creation of an Modelica-expression
+easier. For example if you want to create a modelica-array from a list:
+
+[source,java]
+----
+List<Integer> xs = Arrays.toList(1,2,3,4);
+String modelicaArray = ScriptingHelper.asArray(xs);
+----
+
+The helpers avoid common pitfalls like missing `"`, `,` `{`, etc.
+
+= Maven coordinates
+This library is available on
+https://search.maven.org/#search%7Cga%7C1%7Comc-java-api[Maven Central]:
+
+|===
+| GroupId | ArtifactId | Version
+
+| de.thm.mni.mote | omc-java-api | 0.2
+|===
+
+== Gradle
+[source,js]
+----
+compile: group: "de.thm.mni.mote", name: "omc-java-api", version: "0.2"
+----
+
+== Maven
+[source, xml]
+----
+<dependency>
+	<groupId>de.thm.mni.mote</groupId>
+	<artifactId>omc-java-api</artifactId>
+	<version>0.2</version>
+</dependency>
+----
+
+
+[[logging]]
+Logging
+-------
+
+This library uses the http://www.slf4j.org/[slf4j] api for logging.
+Provide a proper logging-framework for controlling logging output, for
+example http://logback.qos.ch/[logback].
+
+[[license]]
+License
+-------
+
+This library is distributed under the terms of the *GNU General Public
+License Version 3.0*. For more information see the LICENSE and the
+https://github.com/OpenModelica/OMCompiler/blob/master/COPYING[OpenModelica
+License].
+
+[[notes]]
+Notes
+-----
+
+* This implementation is based on OpenModelica's
+https://openmodelica.org/svn/OpenModelica/tags/OPENMODELICA_1_9_0_BETA_4/doc/OpenModelicaSystem.pdf[System
+Documentation V. 2013-01-28]
+* omc's scripting-API is documented at
+https://build.openmodelica.org/Documentation/OpenModelica.Scripting.html[API]
+* If an `omc`-instance gets started as subprocess `stdin` and `stdout`
+are redirected into `$TMP/omc_home/omc.log`.
+* Running 1 test in gradle: `gradle test --tests <TESTNAME>`
