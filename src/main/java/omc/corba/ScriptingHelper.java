@@ -40,7 +40,6 @@ public final class ScriptingHelper {
 	private static String bckslash = "\\\\";
 
 	//matches: ["this is a test"] AND [this is a test]
-	private static Pattern quotePattern = Pattern.compile("^\"((?:.|\\n)+)\"$");
 	//matches: [{}] AND [{bla, "blup", hans}]
 	private static Pattern extractArrayPattern = Pattern.compile("^\\{+((?:.|\\n)*?)\\}+$");
 
@@ -93,14 +92,9 @@ public final class ScriptingHelper {
 
     /** Removes trailing and leading quotes (&quot;) from `s`. */
 	public static String killTrailingQuotes(String s) {
-		Matcher matcher = quotePattern.matcher(s);
 		if(s.equals("\"\"")) return "";
-		else if(matcher.matches()) {
-			return matcher.group(1).trim();
-		} else {
-			return s.trim();
-		}
-	}
+    else return s.trim().replaceAll("^\"|\"$", "");
+  }
 	
 	
 	/** Turns the given modelica expression - which should be an array -
