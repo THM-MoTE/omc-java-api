@@ -39,7 +39,6 @@ public final class ScriptingHelper {
 	//regex voodoo; thumbs up for escaping the escape characters ;)
 	private static String bckslash = "\\\\";
 
-	//matches: ["this is a test"] AND [this is a test]
 	//matches: [{}] AND [{bla, "blup", hans}]
 	private static Pattern extractArrayPattern = Pattern.compile("^\\{+((?:.|\\n)*?)\\}+$");
 
