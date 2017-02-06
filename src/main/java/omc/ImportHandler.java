@@ -27,11 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,16 +102,5 @@ public class ImportHandler {
   
   public List<Pair<String, Path>> getImportedLibs() {
     return importedLibs;
-  }
-  
-  public void addImportLib(OMCInterface omc, Path path) throws IOException {
-    if (loadLibrary(omc, path)) {
-      saveImportFile();
-    }
-  }
-  
-  private void saveImportFile() throws IOException {
-    List<String> libs = this.importedLibs.stream().map(p -> p.getValue().toString()).sorted().collect(Collectors.toList());
-    Files.write(this.importFile, libs, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 }
