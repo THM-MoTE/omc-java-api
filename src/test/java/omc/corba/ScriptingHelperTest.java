@@ -137,12 +137,12 @@ public class ScriptingHelperTest {
     
     String s4 = "{\"model\",\"Ideal linear electrical resistor\",false,false,false,\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\",true,53,3,113,15,{},false,false,\"\",\"\"}";
     List<Object> exp2 = Arrays.asList(
-        "\"model\"",
-        "\"Ideal linear electrical resistor\"",
-        "false", "false", "false",
-        "\"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo\"",
-        "true", "53", "3", "113", "15", Collections.EMPTY_LIST, "false", "false", "\"\"", "\"\"");
-    System.out.println(s4);
+				"model",
+				"Ideal linear electrical resistor",
+				"false", "false", "false",
+				"/usr/lib/omlibrary/Modelica 3.2.2/Electrical/Analog/Basic.mo",
+				"true", "53", "3", "113", "15", Collections.EMPTY_LIST, "false", "false", "", "");
+		System.out.println(s4);
     assertEquals(fromNestedArrayToNestedList(s4), exp2);
     
     String s5 = "{{{nico, \"derb\"}}}";

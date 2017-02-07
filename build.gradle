@@ -7,7 +7,7 @@ apply plugin: 'io.codearte.nexus-staging'
 
 
 group = "de.thm.mni.mote"
-version = "0.3.2-dev"
+version = "0.3.3-dev"
 
 
 repositories {
