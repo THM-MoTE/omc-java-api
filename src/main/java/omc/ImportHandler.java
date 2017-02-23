@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ImportHandler {
-  private static final String importFileName = "package.imports";
+  public static final String importFileName = "package.imports";
   private static final String packageFileName = "package.mo";
   
   private final Logger log = LoggerFactory.getLogger(ImportHandler.class);

@@ -26,5 +26,6 @@ lazy val root = Project(id = "omc-java-api", base = file(".")).
 resolvers += Resolver.jcenterRepo
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.5"
 libraryDependencies += "org.testng" % "testng" % "6.9.12" % Test
 autoScalaLibrary := false
