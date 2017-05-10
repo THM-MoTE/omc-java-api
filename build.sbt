@@ -19,7 +19,7 @@ lazy val root = Project(id = "omc-java-api", base = file(".")).
     organization := "de.thm.mote",
     name := "omc-java-api",
     version := "0.2",
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.12.2",
     javacOptions ++= Seq("-source", "1.8")
   )
 
