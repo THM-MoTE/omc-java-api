@@ -18,4 +18,5 @@ ensime*
 bin
 target
 build
+out
 project/target
