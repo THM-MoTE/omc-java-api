@@ -108,6 +108,17 @@ public abstract class OMCInterface {
     return res;
   }
 
+
+    public static String findLocale() {
+        String systemLang = System.getenv("LANG");
+        if(systemLang != null)
+            return systemLang;
+        else {
+            LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).warn("environment variable `LANG` undefined; using fallback locale: {}", fallbackLocale);
+            return fallbackLocale;
+        }
+    }
+
   // =========== API functions
 
     /** Tests wether the `className` is a `type`.
