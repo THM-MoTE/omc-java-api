@@ -17,8 +17,7 @@ public class ZeroMQClient extends OMCInterface {
 
   private final IORNameProvider portFileProvider;
   private final int ioThreadCnt = 1;
-  private final String omcLocale;
-  private final String omc;
+  private  final OmcExecuter omcExecutor;
   private Socket socket;
   private Context context;
   private boolean isConnected = false;
@@ -29,9 +28,8 @@ public class ZeroMQClient extends OMCInterface {
 
   public ZeroMQClient(String omcExec, String locale) {
     super();
-    this.omcLocale = locale;
-    this.omc = omcExec;
     portFileProvider = new ZMQPortFileProvider();
+    this.omcExecutor = new OmcExecuter(omcExec, locale);
   }
 
   @Override
@@ -61,7 +59,6 @@ public class ZeroMQClient extends OMCInterface {
     }
     return Optional.of(erg.trim());
   }
-
 
   @Override
   public void connect() throws IOException {
