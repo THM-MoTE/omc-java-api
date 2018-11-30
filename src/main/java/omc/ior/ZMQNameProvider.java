@@ -5,7 +5,7 @@ import omc.Global;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class ZMQNameProvider extends IORNameProvider {
+public class ZMQNameProvider implements IORNameProvider {
   public static final String DEFAULT_PORT = "om_local";
   @Override
   public Optional<String> getSuffix() {
