@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import omc.ior.IORNameProvider;
 import omc.ior.ZMQPortFileProvider;
@@ -22,6 +24,8 @@ public class ZeroMQClient extends OMCInterface {
   private Context context;
   private boolean isConnected = false;
 
+  private final Lock socketLock;
+
   public ZeroMQClient(String omcExec) {
     this(omcExec, findLocale());
   }
@@ -30,6 +34,7 @@ public class ZeroMQClient extends OMCInterface {
     super();
     portFileProvider = new ZMQPortFileProvider();
     this.omcExecutor = new OmcExecuter(omcExec, locale);
+    this.socketLock = new ReentrantLock();
   }
 
   @Override
@@ -37,16 +42,24 @@ public class ZeroMQClient extends OMCInterface {
     if(!isConnected) {
       throw new IllegalStateException("ZMQ-Client not connected!");
     } else {
-      boolean success = socket.send(expression);
-      String response = socket.recvStr().trim();
-      log.debug("sendExpression: {} returned {}", expression, response);
-      return new Result(response, getError());
+        socketLock.lock();
+        String response;
+        try {
+            boolean success = socket.send(expression);
+            response = socket.recvStr().trim();
+        } finally { socketLock.unlock(); }
+        log.debug("sendExpression: {} returned {}", expression, response);
+        return new Result(response, getError());
     }
   }
 
   private Optional<String> getError() {
-    boolean success = socket.send(GET_ERRORS);
-    String erg = socket.recvStr().trim();
+      socketLock.lock();
+      String erg;
+      try {
+          boolean success = socket.send(GET_ERRORS);
+          erg = socket.recvStr().trim();
+      } finally { socketLock.unlock(); }
     log.debug("receiving errors returned: {}", erg);
 
     if(erg.isEmpty() || erg.equals("\"\""))
