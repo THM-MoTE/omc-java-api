@@ -64,11 +64,13 @@ public class ZeroMQClient extends OMCInterface {
   public void connect() throws IOException {
     context = ZMQ.context(ioThreadCnt);
     socket = context.socket(ZMQ.REQ);
+    socket.setLinger(0); // Dismisses pending messages if closed
     String portFilecontent = readPortFile();
     log.debug("port file content: {}", portFilecontent);
     boolean con = socket.connect(portFilecontent);
     log.debug("connecting to socket: {}", con);
     isConnected = true;
+    call("loadModel", "Modelica");
   }
 
   @Override
