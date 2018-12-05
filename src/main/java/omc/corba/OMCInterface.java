@@ -29,11 +29,16 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Represents a connection to omc over CORBA.
+/** Represents a connection to omc.
  *
- * A CORBA client is only usable after a call to
+ * A client is only usable after a call to
  * {@link OMCInterface#connect() connect} and until a call to
  * {@link OMCInterface#disconnect() disconnect}.
+ *
+ * <p>
+ * Note: From version 0.4 and onwards, the CORBA implementation is deprecated in favour of
+ * the ZeroMQClient. The CORBA support will be removed in java 11.
+ * </p>
  *
  * <p>
  *  Note: Java's CORBA-API uses the java.util.logging framework.
@@ -48,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <pre>
  * {@code
- *  OMCInterface client = new OMCClient();
+ *  OMCInterface client = new ZeroMQClient();
  *  client.connect();
  *  //client is connected; start using it
  *  client.sendExpression("model test end test;");
