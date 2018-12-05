@@ -26,11 +26,13 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class OmcExecuter {
   private final String omcExecutable;
   private final String locale;
   private final Logger log;
+  private Optional<Process> process = Optional.empty();
 
   public OmcExecuter(String omcExecutable, String locale) {
     this.omcExecutable = omcExecutable;
@@ -66,6 +68,7 @@ public class OmcExecuter {
 
     try {
       Process process = pb.start();
+      this.process = Optional.of(process);
       log.info("started {} {} - locale {} - output redirecting to: {}",
         cmd, locale, logFile);
       return process;
@@ -73,5 +76,9 @@ public class OmcExecuter {
       log.error("Couldn't start {} {} as subprocess in {}", cmd, omcWorkingDir,  e);
       throw new IllegalStateException("couldn't start omc!");
     }
+  }
+
+  public void shutdown() {
+    process.ifPresent(p -> p.destroy());
   }
 }

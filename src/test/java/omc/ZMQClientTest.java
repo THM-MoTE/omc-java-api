@@ -7,6 +7,7 @@ import static org.testng.Assert.assertTrue;
 
 import omc.corba.OMCInterface;
 import omc.corba.Result;
+import omc.ior.ZMQPortFileProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ZMQClientTest {
 
   @Test
   public void simpleExpressionTest() throws IOException {
-    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale);
+    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale, new ZMQPortFileProvider());
     client.connect();
     Result successResult = client.sendExpression("model test end test;");
     assertTrue(successResult.result.length() > 1);
@@ -37,13 +38,13 @@ public class ZMQClientTest {
 
   @Test(expectedExceptions = IllegalStateException.class)
   public void sendWithoutConnectTest() throws IOException {
-    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale);
+    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale, new ZMQPortFileProvider());
     client.sendExpression("model t end t;");
   }
 
   @Test
   public void testErrors() throws IOException {
-    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale);
+    ZeroMQClient client = new ZeroMQClient("omc", OMCInterface.fallbackLocale, new ZMQPortFileProvider());
     client.connect();
     Result res = client.sendExpression("loadFle(\"testbla\")");
     assertTrue(res.error.isPresent());
@@ -54,7 +55,7 @@ public class ZMQClientTest {
 
   @Test
   public void testExpressions() throws IOException {
-    ZeroMQClient client = new ZeroMQClient("omc", "en_US.UTF-8");
+    ZeroMQClient client = new ZeroMQClient("omc", "en_US.UTF-8", new ZMQPortFileProvider());
     client.connect();
     Result r = client.sendExpression("model test Real x = 0.0; end test;");
     assertEquals(r, new Result("{test}", Optional.empty()));

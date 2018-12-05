@@ -44,12 +44,12 @@ public class ZeroMQClient extends OMCInterface {
   private final Lock socketLock;
 
   public ZeroMQClient(String omcExec) {
-    this(omcExec, findLocale());
+    this(omcExec, findLocale(), new ZMQPortFileProvider());
   }
 
-  public ZeroMQClient(String omcExec, String locale) {
+  public ZeroMQClient(String omcExec, String locale, ZMQPortFileProvider suffixProvider) {
     super();
-    portFileProvider = new ZMQPortFileProvider();
+    portFileProvider = suffixProvider;
     this.omcExecutor = new OmcExecuter(omcExec, locale);
     this.socketLock = new ReentrantLock();
   }
@@ -92,6 +92,13 @@ public class ZeroMQClient extends OMCInterface {
 
   @Override
   public void connect() throws IOException {
+    //always start a fresh omc instance
+    omcExecutor.startOmc("--interactive=zmq", "-z="+portFileProvider.getSuffix().get());
+    try {
+      Thread.sleep(maxSleep);
+    } catch (InterruptedException ex) {
+      // ignore
+    }
     context = ZMQ.context(ioThreadCnt);
     socket = context.socket(ZMQ.REQ);
     socket.setLinger(0); // Dismisses pending messages if closed
@@ -107,6 +114,7 @@ public class ZeroMQClient extends OMCInterface {
   public void disconnect() throws IOException {
     socket.close();
     context.close();
+    omcExecutor.shutdown();
     isConnected = false;
   }
 
