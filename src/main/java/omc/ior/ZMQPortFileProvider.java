@@ -21,15 +21,18 @@ import omc.Global;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/** A suffix-provider for ZeroMQ connections. This suffix is used to find the zmq port file. */
 public class ZMQPortFileProvider implements IORNameProvider {
   public static final String DEFAULT_SUFFIX = "om_local";
 
   private final String suffix;
 
+  /** Create a provider by using the DEFAULT_SUFFIX='om_local'. */
   public ZMQPortFileProvider() {
     this(DEFAULT_SUFFIX);
   }
 
+  /** Create a provider with the given suffix. */
   public ZMQPortFileProvider(String suffix) {
     this.suffix = suffix;
   }
