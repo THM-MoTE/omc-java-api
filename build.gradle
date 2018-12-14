@@ -5,7 +5,6 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 
-
 group = "de.thm.mni.mote"
 version = "0.3.5"
 
@@ -78,6 +77,8 @@ install {
     }
 }
 
+//only setup maven-central release, if properties defined
+if(project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -129,4 +130,5 @@ uploadArchives {
 nexusStaging {
     username = ossrhUsername
     password = ossrhPassword
+}
 }
