@@ -18,6 +18,8 @@ package omc.ior;
 
 import omc.Global;
 
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -44,6 +46,10 @@ public class ZMQPortFileProvider implements IORNameProvider {
 
   @Override
   public Path getPath() {
-    return Global.tmpDir.resolve(String.format("openmodelica.%s.port.%s", Global.username, suffix));
+    Path option1 = Global.tmpDir.resolve(String.format("openmodelica.%s.port.%s", Global.username, suffix));
+    Path option2 = Global.tmpDir.resolve(String.format("openmodelica.%s.nobody.port.%s", Global.username, suffix));
+    if(Files.exists(option1)) return option1;
+    else if(Files.exists(option2)) return option2;
+    else throw new IllegalStateException(String.format("Can't find a omc port file! searched in: [%s,%s]", option1,option2));
   }
 }
