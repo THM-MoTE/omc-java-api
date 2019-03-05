@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class OmcExecuter {
   private final String omcExecutable;
@@ -43,14 +40,14 @@ public class OmcExecuter {
   public Process startOmc(String... arguments) {
     List<String> cmd = new LinkedList<>();
     cmd.add(omcExecutable);
-    cmd.addAll(List.of(arguments));
+    cmd.addAll(Arrays.asList(arguments));
 
     ProcessBuilder pb = new ProcessBuilder(cmd);
     //set environment
     Map<String,String> env = pb.environment();
     env.put(OMCInterface.localeEnvVariable, locale);
 
-    Path omcWorkingDir = Global.tmpDir.resolve("omc_home");
+    Path omcWorkingDir = Global.tmpDir.resolve("omc_home-"+ UUID.randomUUID().toString());
     Path logFile = omcWorkingDir.resolve("omc.log");
     try {
       //setup working directory & log file
@@ -69,11 +66,11 @@ public class OmcExecuter {
     try {
       Process process = pb.start();
       this.process = Optional.of(process);
-      log.info("started {} {} - locale {} - output redirecting to: {}",
+      log.info("started {} locale {} - output redirecting to: {}",
         cmd, locale, logFile);
       return process;
     } catch (IOException e) {
-      log.error("Couldn't start {} {} as subprocess in {}", cmd, omcWorkingDir,  e);
+      log.error("Couldn't start {} as subprocess in {}", cmd, omcWorkingDir,  e);
       throw new IllegalStateException("couldn't start omc!");
     }
   }
