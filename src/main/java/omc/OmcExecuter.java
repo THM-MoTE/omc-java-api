@@ -46,6 +46,7 @@ public class OmcExecuter {
     //set environment
     Map<String,String> env = pb.environment();
     env.put(OMCInterface.localeEnvVariable, locale);
+    env.put("USER", Global.username);
 
     Path omcWorkingDir = Global.tmpDir.resolve("omc_home-"+ UUID.randomUUID().toString());
     Path logFile = omcWorkingDir.resolve("omc.log");
