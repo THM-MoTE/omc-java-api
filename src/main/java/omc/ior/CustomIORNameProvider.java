@@ -14,7 +14,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-package omc.corba;
+package omc.ior;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

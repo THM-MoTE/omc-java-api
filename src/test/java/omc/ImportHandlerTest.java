@@ -17,8 +17,9 @@
 
 package omc;
 
-import omc.corba.OMCClient;
+import omc.ZeroMQClient;
 import omc.corba.OMCInterface;
+import omc.ior.ZMQPortFileProvider;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -42,8 +43,8 @@ public class ImportHandlerTest {
   private final List<String> fileContent = Arrays.asList("../lib1", "../../lib2", "/lib/SHM", "/var/lib/SH");
   private List<Path> libPaths;
   
-  private final OMCInterface omc = new OMCClient("omc", "en_US.UTF-8");
-  
+  private final OMCInterface omc = new ZeroMQClient("omc", "en_US.UTF-8", new ZMQPortFileProvider());
+
   @BeforeClass
   public void init() throws IOException {
     projectRoot = Files.createTempDirectory("ext-libs");

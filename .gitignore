@@ -18,5 +18,6 @@ ensime*
 bin
 target
 build
+out
 project/target
 gradle.properties

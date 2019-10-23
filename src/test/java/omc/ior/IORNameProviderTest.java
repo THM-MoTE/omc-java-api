@@ -1,4 +1,4 @@
-package omc.corba;
+package omc.ior;
 
 import static org.testng.Assert.assertEquals;
 
