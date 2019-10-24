@@ -40,7 +40,7 @@ public final class ScriptingHelper {
 	private static String bckslash = "\\\\";
 
 	//matches: [{}] AND [{bla, "blup", hans}]
-	private static Pattern extractArrayPattern = Pattern.compile("^\\{+((?:.|\\n)*?)\\}+$");
+	private static Pattern extractArrayPattern = Pattern.compile("\\{+([^\\{|^\\}]+)\\}+");
 
 	private static String arraySplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static Pattern pathPattern = Pattern.compile("((?:\\w:)?(((?:\\/|\\\\)[\\w\\-\\.\\s]+)+))");
@@ -94,20 +94,23 @@ public final class ScriptingHelper {
 		if(s.equals("\"\"")) return "";
     else return s.trim().replaceAll("^\"|\"$", "");
   }
-	
-	
+
+
 	/** Turns the given modelica expression - which should be an array -
 	 *  into a List of Strings.
 	 */
 	public static List<String> fromArray(String modelicaExpr) {
 		Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
-			matcher.find();
+		if(matcher.find()) {
 			String extractedArray = matcher.group(1);
 			String[] subs = extractedArray.split(arraySplitRegex);
 			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
 				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
+		} else {
+			return Collections.emptyList();
+		}
 	}
-	
+
 	/** Turns the given modelica expression - which should be an array -
      *  into a flat List of Strings.
      */
@@ -117,13 +120,13 @@ public final class ScriptingHelper {
 			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
 			ListParser.ListContext listContext = p.list();
 			if (listContext != null) return fromNestedArray(listContext.listElement());
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
+
 	private static List<String> fromNestedArray(List<ListElementContext> list) {
 		List<String> l = new ArrayList<>();
 		for(ListElementContext lec : list) {
@@ -135,7 +138,7 @@ public final class ScriptingHelper {
 		}
 		return l;
 	}
-	
+
 	/** Turns the given modelica expression - which should be an array -
 	 *  into a flat List of Strings.
 	 */
