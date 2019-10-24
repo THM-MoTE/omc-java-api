@@ -5,14 +5,20 @@ import scala.util.Try
 
 trait PrimitiveParser extends JavaTokenParsers {
   def number: Parser[Double] = floatingPointNumber ^^ { _.toDouble }
-  def string: Parser[String] = stringLiteral ^^ { str => str.substring(1, str.length-1) }
+  def string: Parser[String] = {
+    //parser for '<...>' taken from original stringLiteral.
+    //source: https://github.com/scala/scala-parser-combinators/blob/1.2.x/shared/src/main/scala/scala/util/parsing/combinator/JavaTokenParsers.scala
+    (stringLiteral |
+    ("\'"+"""([^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt]|\\u[a-fA-F0-9]{4})*"""+"\'").r) ^^ { str => str.substring(1, str.length-1) }
+  }
+
   def bool: Parser[Boolean] = (
       "true" ^^^ {true}
     | "false"  ^^^ {false}
     )
   def identifer: Parser[String] = """([a-zA-Z][\w.]+)""".r
 
-  def primitives: Parser[Any] = number | string | identifer | bool
+  def primitives: Parser[Any] = number | bool | identifer | string
 
   def parseWith[T](p:Parser[T], input:CharSequence): Try[T] =
     parseAll(p, input) match {

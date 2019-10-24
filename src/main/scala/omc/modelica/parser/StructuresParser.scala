@@ -9,5 +9,6 @@ trait StructuresParser extends PrimitiveParser {
     case name~fields => MoRecord(name, fields.toMap)
   }
 
-  def recordField: Parser[(String, Any)] = ((ident <~ "=") ~ primitives) ^^ { case k~v => k -> v }
+  def recordField: Parser[(String, Any)] = ((ident <~ "=") ~ recordValues) ^^ { case k~v => k -> v }
+  def recordValues: Parser[Any] = (number | bool | string | list)
 }

@@ -37,26 +37,40 @@ class StructuresParserSpec
     rec.name shouldBe "test"
     rec.get("i").get shouldBe 45.89
     rec.get("resultFile").get shouldBe "a/b/results.mat"
-    val complex = """record SimulationResult
-        |resultFile = "«DOCHOME»/Test_res.mat",
-        |simulationOptions = "startTime = 0.0,
-        |stopTime = 3.0,
-        |numberOfIntervals = 500,
-        |tolerance = 1e-06,
-        |method = 'dassl',
-        |fileNamePrefix = 'Test',
-        |options = '',
-        |outputFormat = 'mat',
-        |variableFilter = '.*',
-        |timeTemplates = 0.028273708,
-        |timeCompile = 0.530051523,
-        |timeSimulation = 0.037270063
-        |end SimulationResult;""".stripMargin
+  }
 
-//    val recComplex = p.parseWith(p.record, complex).get
-//    recComplex.name shouldBe "SimulationResult"
-//    recComplex.get("timeCompile").get shouldBe 0.530051523
-//    recComplex.get("outputFormat").get shouldBe "mat"
-//    recComplex.get("method").get shouldBe "dassl"
+  it should "parse complex records" in {
+    val complex = """record SimulationResult
+                    |resultFile = "«DOCHOME»/Test_res.mat",
+                    |simulationOptions = "startTime = 0.0",
+                    |stopTime = 3.0,
+                    |numberOfIntervals = 500,
+                    |tolerance = 1e-06,
+                    |method = 'dassl',
+                    |fileNamePrefix = 'Test',
+                    |options = '',
+                    |outputFormat = 'mat',
+                    |variableFilter = '.*',
+                    |timeTemplates = 0.028273708,
+                    |timeCompile = 0.530051523,
+                    |timeSimulation = 0.037270063
+                    |end SimulationResult;""".stripMargin
+
+    val recComplex = p.parseWith(p.record, complex).get
+    recComplex.name shouldBe "SimulationResult"
+    recComplex.get("timeCompile").get shouldBe 0.530051523
+    recComplex.get("outputFormat").get shouldBe "mat"
+    recComplex.get("method").get shouldBe "dassl"
+  }
+
+  it should "parse lists inside of records" in {
+    val record =
+      """record test
+        |a = 5,
+        |xs = {3.0,4.5,5.0}
+        |end test;
+        |""".stripMargin
+    val rec = p.parseWith(p.record, record).get
+    rec.get("xs").get shouldBe List(3.0,4.5,5.0)
   }
 }
