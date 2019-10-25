@@ -54,7 +54,7 @@ public final class ScriptingHelper {
     private static final Pattern withinPattern = Pattern.compile(withinRegex);
     public static final Pattern modelPattern = Pattern.compile(modelRegex);
 
-    private static final StructuresParser parser = new StructuresParser() {};
+  private static final StructuresParser parser = StructuresParser$.MODULE$.getInstance();
 
 	private ScriptingHelper() {
 	}
