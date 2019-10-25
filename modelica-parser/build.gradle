@@ -1,0 +1,41 @@
+apply plugin: 'scala'
+apply plugin: 'maven'
+apply plugin: "com.github.maiflai.scalatest"
+
+group = "de.thm.mni.mote"
+version = "0.3.5"
+sourceCompatibility = 1.8
+String scalaVersion = "2.12.8"
+
+repositories {
+  mavenCentral()
+  jcenter()
+}
+
+javadoc {
+  failOnError = false
+}
+
+dependencies {
+  compile 'org.scala-lang:scala-library:'+scalaVersion
+  compile "org.scala-lang.modules:scala-parser-combinators_2.12:1.1.2"
+  testImplementation 'org.scalatest:scalatest_2.12:3.0.8'
+  testRuntime 'org.pegdown:pegdown:1.4.2'
+}
+
+test {
+  testLogging.showStandardStreams = true
+  testLogging.exceptionFormat = 'full'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        //Needed only for SNAPSHOT versions
+        //maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.maiflai:gradle-scalatest:0.25"
+    }
+}

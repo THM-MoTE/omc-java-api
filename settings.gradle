@@ -1,0 +1,2 @@
+rootProject.name = "omc-java-api"
+include 'modelica-parser'

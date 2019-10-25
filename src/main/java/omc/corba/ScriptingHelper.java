@@ -20,6 +20,8 @@ import omc.Global;
 import omc.corba.parser.ListLexer;
 import omc.corba.parser.ListParser;
 import omc.corba.parser.ListParser.ListElementContext;
+import omc.modelica.parser.StructuresParser;
+import omc.modelica.parser.StructuresParser$;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -31,6 +33,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import scala.collection.JavaConverters;
 
 /** Helper for creating commands/expressions for the corba-interface.
  * 	This class contains convenient converters to generate Modelica-code.
@@ -50,6 +53,8 @@ public final class ScriptingHelper {
 			"(?:(?:model)|(?:class)|(?:package)|(?:function)|(?:connector))\\s+([\\w\\d_]+)";
     private static final Pattern withinPattern = Pattern.compile(withinRegex);
     public static final Pattern modelPattern = Pattern.compile(modelRegex);
+
+    private static final StructuresParser parser = new StructuresParser() {};
 
 	private ScriptingHelper() {
 	}
@@ -100,43 +105,16 @@ public final class ScriptingHelper {
 	 *  into a List of Strings.
 	 */
 	public static List<String> fromArray(String modelicaExpr) {
-		Matcher matcher = extractArrayPattern.matcher(modelicaExpr);
-		if(matcher.find()) {
-			String extractedArray = matcher.group(1);
-			String[] subs = extractedArray.split(arraySplitRegex);
-			return (subs.length == 0 || extractedArray.isEmpty()) ? Collections.emptyList() :
-				Arrays.stream(subs).map(String::trim).collect(Collectors.toList());
-		} else {
-			return Collections.emptyList();
-		}
+    scala.collection.immutable.List<String> origin = parser.stringList(modelicaExpr).get();
+	  return JavaConverters.seqAsJavaList(origin);
 	}
 
 	/** Turns the given modelica expression - which should be an array -
      *  into a flat List of Strings.
      */
 	public static List<String> fromNestedArray(String modelicaExpr) {
-		List<String> list = new ArrayList<>();
-		try {
-			ListParser p = new ListParser(new CommonTokenStream(new ListLexer(new ANTLRInputStream(new ByteArrayInputStream(modelicaExpr.getBytes())))));
-			ListParser.ListContext listContext = p.list();
-			if (listContext != null) return fromNestedArray(listContext.listElement());
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	private static List<String> fromNestedArray(List<ListElementContext> list) {
-		List<String> l = new ArrayList<>();
-		for(ListElementContext lec : list) {
-			if(lec.list() != null) l.addAll(fromNestedArray(lec.list().listElement()));
-			else if(lec.bool() != null) l.add(lec.bool().getText());
-			else if (lec.number() != null) l.add(lec.number().getText());
-			else if(lec.string() != null) l.add(lec.string().getText());
-			else if(lec.path() != null) l.add(lec.path().getText());
-		}
-		return l;
+    scala.collection.immutable.List<String>  origin = parser.flattenedStringList(modelicaExpr).get();
+    return JavaConverters.seqAsJavaList(origin);
 	}
 
 	/** Turns the given modelica expression - which should be an array -
