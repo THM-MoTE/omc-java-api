@@ -24,6 +24,15 @@ trait StructuresParser extends PrimitiveParser {
     }
     parseWith(list, expr).map(doFlatten)
   }
+
+  def typedList[T:scala.reflect.ClassTag](expr:String): Try[List[T]] = parseWith(list, expr).flatMap { xs =>
+    Try(
+      xs.foldRight(List.empty[T]) {
+        case (x:T,ys) => x::ys
+        case _ => throw new IllegalArgumentException(s"Modelica list contains different types!")
+      }
+    )
+  }
 }
 
 object StructuresParser {

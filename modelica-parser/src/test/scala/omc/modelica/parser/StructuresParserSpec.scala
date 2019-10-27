@@ -20,6 +20,19 @@ class StructuresParserSpec
     val ar  ="{456, {\"test\", mani},{}, 789.34}"
     p.parseWith(p.list, ar) shouldBe a [Success[_]]
   }
+  it should "convert lists if values are all the same type" in {
+    val expr = "{5,6,7,8,9}"
+    val erg = p.typedList[Double](expr)
+    erg shouldBe a [Success[_]]
+    erg.get shouldBe (List(5,6,7,8,9).map(_.toDouble))
+  }
+  it should "not convert the list if values aren't the  same type" in {
+    val expr = "{5,6,7,'test', 'blup'}"
+    val erg = p.typedList[Double](expr)
+    erg shouldBe a [Failure[_]]
+    val Failure(ex) = erg
+    ex shouldBe a [IllegalArgumentException]
+  }
 
   it should "parse simple records" in {
     val empty = """record test
@@ -35,8 +48,8 @@ class StructuresParserSpec
     p.parseWith(p.record, empty) shouldBe a [Success[_]]
     val rec = p.parseWith(p.record, simple).get
     rec.name shouldBe "test"
-    rec.get("i").get shouldBe 45.89
-    rec.get("resultFile").get shouldBe "a/b/results.mat"
+    rec.get[Any]("i").get shouldBe 45.89
+    rec.get[Any]("resultFile").get shouldBe "a/b/results.mat"
   }
 
   it should "parse complex records" in {
@@ -58,9 +71,9 @@ class StructuresParserSpec
 
     val recComplex = p.parseWith(p.record, complex).get
     recComplex.name shouldBe "SimulationResult"
-    recComplex.get("timeCompile").get shouldBe 0.530051523
-    recComplex.get("outputFormat").get shouldBe "mat"
-    recComplex.get("method").get shouldBe "dassl"
+    recComplex.get[Any]("timeCompile").get shouldBe 0.530051523
+    recComplex.get[Any]("outputFormat").get shouldBe "mat"
+    recComplex.get[Any]("method").get shouldBe "dassl"
   }
 
   it should "parse lists inside of records" in {
@@ -71,6 +84,6 @@ class StructuresParserSpec
         |end test;
         |""".stripMargin
     val rec = p.parseWith(p.record, record).get
-    rec.get("xs").get shouldBe List(3.0,4.5,5.0)
+    rec.get[Any]("xs").get shouldBe List(3.0,4.5,5.0)
   }
 }
