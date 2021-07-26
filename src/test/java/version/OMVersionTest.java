@@ -34,6 +34,40 @@ public class OMVersionTest {
     assertEquals(v.toString(), "V 1.11.23");
   }
 
+  /**
+   * Null hypothesis: Parsing will fail if the version string starts with
+   * "OMCompiler" instead of "OpenModelica".
+   */
+  @Test
+  public void parseOMCompiler() {
+    String version = "OMCompiler 1.17.0";
+    Version v = new OMVersion(version);
+    assertEquals("V 1.17.0", v.toString());
+  }
+
+  /**
+   * Null hypothesis: Parsing will fail if the version string contains a
+   * leading v directly before the major version.
+   */
+  @Test
+  public void parseWithLeadingV() {
+    String version = "OpenModelica v1.17.0";
+    Version v = new OMVersion(version);
+    assertEquals("V 1.17.0", v.toString());
+  }
+
+  /**
+   * Null hypothesis: Parsing will fail for a dev version that contains "-dev"
+   * instead of "~dev"
+   */
+  @Test
+  public void parseDevWithDash() {
+    String version = "OpenModelica 1.17.0-dev.344+gc8233fa62a";
+    Version v = new OMVersion(version);
+    assertEquals("V 1.17.0", v.toString());
+    assertTrue(v.isDevVersion);
+  }
+
   @Test()
   public void parseMinor() {
     String s = "OpenModelica 1.234";
