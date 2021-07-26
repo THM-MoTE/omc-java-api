@@ -33,8 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 public class ImportHandlerTest {
   
@@ -83,12 +82,12 @@ public class ImportHandlerTest {
   @Test
   public void testLoadLibrary() throws IOException {
     ImportHandler libs = new ImportHandler(projectRoot);
-    assertEquals(libs.loadLibrary(omc, Paths.get("/Users/nico/2014-modelica-kotani/SHM")), true);
+    assertTrue(libs.loadLibrary(omc, Paths.get("/Users/nico/2014-modelica-kotani/SHM")));
   }
   
   @Test(expectedExceptions = FileNotFoundException.class)
   public void testLoadLibraryFail() throws IOException {
     ImportHandler libs = new ImportHandler(projectRoot);
-    assertEquals(libs.loadLibrary(omc, projectRoot), true);
+    assertTrue(libs.loadLibrary(omc, projectRoot));
   }
 }
