@@ -122,6 +122,10 @@ uploadArchives {
                         name 'Marcel Hoppe'
                         email 'marcel.hoppe@mni.thm.de'
                     }
+                    developer {
+                        name 'Christopher Schölzel'
+                        email 'christopher.schoelzel@mni.thm.de'
+                    }
                 }
             }
         }
