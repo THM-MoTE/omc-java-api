@@ -16,23 +16,10 @@
 
 package version;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class OMVersion extends SemanticVersion {
-  private static final Pattern versionPattern =
-      Pattern.compile("OpenModelica\\s+(?:(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?(?:~dev)?");
 
   public OMVersion(String versionString) {
     super(versionString);
-  }
-
-  @Override
-  protected List<Integer> parseVersion(String rawString) {
-    Matcher matcher = versionPattern.matcher(rawString);
-    return Version.extractNumbers(matcher);
   }
 
   @Override
