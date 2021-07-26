@@ -36,7 +36,7 @@ import java.util.List;
 	*/
 public class SemanticVersion extends Version {
 	private static final Pattern versionPattern =
-	      Pattern.compile("[a-zA-Z]?\\s*(?:(\\d+))?(?:\\.(\\d+))?(?:\\.(\\d+))?");
+	      Pattern.compile("[a-zA-Z]?\\s*(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?");
 
 	public SemanticVersion(String versionString) {
     super(versionString);
