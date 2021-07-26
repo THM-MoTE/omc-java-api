@@ -81,12 +81,14 @@ public class ImportHandlerTest {
   
   @Test
   public void testLoadLibrary() throws IOException {
+    //FIXME this test only ever worked on @njustus machine => needs to be revised
     ImportHandler libs = new ImportHandler(projectRoot);
     assertTrue(libs.loadLibrary(omc, Paths.get("/Users/nico/2014-modelica-kotani/SHM")));
   }
   
   @Test(expectedExceptions = FileNotFoundException.class)
   public void testLoadLibraryFail() throws IOException {
+    //FIXME this test only ever worked on @njustus machine => needs to be revised
     ImportHandler libs = new ImportHandler(projectRoot);
     assertTrue(libs.loadLibrary(omc, projectRoot));
   }
