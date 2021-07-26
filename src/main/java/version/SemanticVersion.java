@@ -26,13 +26,12 @@ import java.util.List;
 	* These version numbers consist of 3 numbers in the format: MAJOR.MINOR.PATCH
 	*
 	* <p>
-	* Examples:
+	* Examples:</p>
 	* <pre>
 	*	{@code
 	*		V 1.2.3 | v 23.43.123 | v 23.0 | v 10.5 | V 5
 	*	}
 	* </pre>
-	*</p>
 	*/
 public class SemanticVersion extends Version {
 	private static final Pattern versionPattern =

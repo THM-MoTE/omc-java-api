@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *  <a href="http://www.slf4j.org/api/org/slf4j/bridge/SLF4JBridgeHandler.html">adapter</a>
  *  to route JUC logging into SLF4J. Note that this adapter has performance issues!
  *
- * <br/><br/>
+ * <br><br>
  * A typical workflow with implementations is:
  * </p>
  * <pre>

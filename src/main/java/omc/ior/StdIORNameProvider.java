@@ -39,11 +39,11 @@ public class StdIORNameProvider implements IORNameProvider {
   /** Returns the default path defined by OMC.
    * <p>
    * This is either:
+   * </p>
    * <ul>
    *  <li> Linux/Mac OS: {@code ($TMP)/openmodelica.<USERNAME>.objid} </li>
    *  <li> Windows: {@code ($TMP)/openmodelica.objid} </li>
    *</ul>
-   * </p>
    */
   @Override
   public Path getPath() {

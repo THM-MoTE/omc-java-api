@@ -24,7 +24,7 @@ import java.util.Optional;
 /** Provider for custom/self-defined IOR name (the suffix).
  * If unique=true the IOR file will be made unique by appending a number to the given suffix.
  *
- *  <p><b>Note:</b><br/>
+ *  <p><b>Note:</b><br>
  *  The check for uniqueness is triggered one's in the constructor-call.
  *  After instantiation the final IOR name is fixed!
  *  <p>
